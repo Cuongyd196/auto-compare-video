@@ -1,0 +1,16 @@
+{
+  "name": "dev-vs-devops",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync-channel": "node scripts/sync-channel.mjs",
+    "predev": "npm run sync-channel",
+    "dev": "npx --yes hyperframes@0.7.58 preview",
+    "precheck": "npm run sync-channel",
+    "check": "npx --yes hyperframes@0.7.58 check",
+    "prerender": "npm run sync-channel",
+    "render": "npx --yes hyperframes@0.7.58 render",
+    "prepublish": "npm run sync-channel",
+    "publish": "npx --yes hyperframes@0.7.58 publish"
+  }
+}
