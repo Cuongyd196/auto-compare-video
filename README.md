@@ -34,7 +34,7 @@ Một số demo video ngắn dạng TikTok/Reels/Shorts đã xuất bản:
 | Demo 1 | Demo 2 |
 | --- | --- |
 | [![Xem demo 1 trên YouTube Shorts](https://img.youtube.com/vi/jXZApHHXl0w/hqdefault.jpg)](https://youtube.com/shorts/jXZApHHXl0w?feature=share) | [![Xem demo 2 trên YouTube Shorts](https://img.youtube.com/vi/8ZfXTse5HFw/hqdefault.jpg)](https://youtube.com/shorts/8ZfXTse5HFw) |
-| ▶️ **[youtube.com/shorts/jXZApHHXl0w](https://youtube.com/shorts/jXZApHHXl0w?feature=share)** | ▶️ **[youtube.com/shorts/8ZfXTse5HFw](https://youtube.com/shorts/8ZfXTse5HFw)** |
+| ▶️ **[www.youtube.com/shorts/PK-BZtdnkFU](www.youtube.com/shorts/PK-BZtdnkFU)** | ▶️ **[youtube.com/shorts/8ZfXTse5HFw](https://youtube.com/shorts/8ZfXTse5HFw)** |
 
 ## Các video hiện có trong repo
 
