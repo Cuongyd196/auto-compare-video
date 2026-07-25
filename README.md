@@ -1,4 +1,4 @@
-# So Sánh Kiến Thức — Comparison Video Template
+# Tạo Video DạngSo Sánh Kiến Thức — Comparison Video Template
 
 **Template video giáo dục ngắn (TikTok/Reels/Shorts)** dựng trên **[HyperFrames](https://hyperframes.heygen.com)** — mỗi video so sánh một cặp khái niệm hay bị nhầm lẫn, theo đúng một layout/nhịp cố định, chỉ đổi nội dung.
 
@@ -29,15 +29,14 @@
 Ảnh chụp trực tiếp từ composition hiện tại (`hyperframes snapshot`) — bảng màu tím-hồng-lục lam và avatar
 robot 2D là giao diện **mặc định hiện hành** của cả series (xem [Bảng màu & thiết kế](#-bảng-màu--thiết-kế)).
 
-Ngoài ra có 2 bản demo dựng render đầy đủ trên YouTube Shorts (một số demo dùng bảng màu/avatar thế
-hệ trước, trước lần cập nhật giao diện gần nhất):
+Một số demo video ngắn dạng TikTok/Reels/Shorts đã xuất bản:
 
 | Demo 1 | Demo 2 |
 | --- | --- |
 | [![Xem demo 1 trên YouTube Shorts](https://img.youtube.com/vi/jXZApHHXl0w/hqdefault.jpg)](https://youtube.com/shorts/jXZApHHXl0w?feature=share) | [![Xem demo 2 trên YouTube Shorts](https://img.youtube.com/vi/8ZfXTse5HFw/hqdefault.jpg)](https://youtube.com/shorts/8ZfXTse5HFw) |
 | ▶️ **[youtube.com/shorts/jXZApHHXl0w](https://youtube.com/shorts/jXZApHHXl0w?feature=share)** | ▶️ **[youtube.com/shorts/8ZfXTse5HFw](https://youtube.com/shorts/8ZfXTse5HFw)** |
 
-## Các video hiện có
+## Các video hiện có trong repo
 
 | Video | Chủ đề | Thư mục |
 |---|---|---|
@@ -95,10 +94,11 @@ comparison-video/
 Mỗi video trong `videos/` là một project HyperFrames **hoàn toàn độc lập** (`npm run dev/check/render/publish` riêng), chỉ dùng chung `.env` Vbee ở root và bộ quy tắc thiết kế trong `DESIGN.md`.
 
 ## 🛠️ Yêu cầu hệ thống
+1. AI coding agent (Claude Code, Cursor, Codex v.v.) để gọi skill tạo video tự động).
+2. Tài khoản **[Vbee TTS](https://vbee.vn/ref/5GTJ9TGU )** (App ID + Access Token) để sinh giọng đọc (có thể tích hợp thêm các TTS khác nếu muốn).
+3. **Node.js** ≥ 18
+4. **FFmpeg & FFprobe** trong `PATH` — cần để đo độ dài audio và render video
 
-1. **Node.js** ≥ 18
-2. **FFmpeg & FFprobe** trong `PATH` — cần để đo độ dài audio và render video
-3. Tài khoản **[Vbee TTS](https://vbee.vn/ref/5GTJ9TGU )** (App ID + Access Token) để sinh giọng đọc
 
 ## 🚀 Bắt đầu
 
@@ -125,7 +125,7 @@ VBEE_VOICE_CODE=n_hanoi_male_protrainer_education_vc  # giọng đọc mặc đ�
 Cách nhanh nhất — dùng **Claude Code**, gọi skill có sẵn kèm cặp khái niệm muốn so sánh, ví dụ:
 
 ```
-/create-video Dev và DevOps — "Dev xây, DevOps vận hành"
+/create-video Dev và DevOps
 ```
 
 Chỉ cần lệnh này là skill tự động làm hết phần còn lại: hỏi/xác nhận lại cặp khái niệm + kịch bản
@@ -185,6 +185,8 @@ Các video mẫu mình đã làm, các bạn có thể xem trong Reels hoặc Ti
 - 📹 TikTok: [www.tiktok.com/@cuongit96](https://www.tiktok.com/@cuongit96)
 
 Nếu hữu ích với các bạn thì cho mình 1 star GitHub nhé 🌟
+
+Nếu muốn ủng hộ mình 1 ly cà phê: https://buymeacoffee.com/cuongit96
 
 ## 📄 License
 
