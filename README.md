@@ -186,7 +186,7 @@ Các video mẫu mình đã làm, các bạn có thể xem trong Reels hoặc Ti
 
 Nếu hữu ích với các bạn thì cho mình 1 star GitHub nhé 🌟
 
-Nếu muốn ủng hộ mình 1 ly cà phê: https://buymeacoffee.com/cuongit96
+Nếu muốn ủng hộ mình 1 ly cà phê: buymeacoffee.com/cuongit96/gallery/4959449
 
 ## 📄 License
 
