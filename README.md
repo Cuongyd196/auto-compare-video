@@ -1,4 +1,4 @@
-# Tạo Video DạngSo Sánh Kiến Thức — Comparison Video Template
+# Tạo Video Dạng So Sánh Kiến Thức — Comparison Video Template
 
 **Template video giáo dục ngắn (TikTok/Reels/Shorts)** dựng trên **[HyperFrames](https://hyperframes.heygen.com)** — mỗi video so sánh một cặp khái niệm hay bị nhầm lẫn, theo đúng một layout/nhịp cố định, chỉ đổi nội dung.
 
