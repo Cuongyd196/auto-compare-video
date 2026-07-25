@@ -94,8 +94,8 @@ comparison-video/
 Mỗi video trong `videos/` là một project HyperFrames **hoàn toàn độc lập** (`npm run dev/check/render/publish` riêng), chỉ dùng chung `.env` Vbee ở root và bộ quy tắc thiết kế trong `DESIGN.md`.
 
 ## 🛠️ Yêu cầu hệ thống
-1. AI coding agent (Claude Code, Cursor, Codex v.v.) để gọi skill tạo video tự động).
-2. Tài khoản **[Vbee TTS](https://vbee.vn/ref/5GTJ9TGU )** (App ID + Access Token) để sinh giọng đọc (có thể tích hợp thêm các TTS khác nếu muốn).
+1. **AI coding agent** (Claude Code, Cursor, Codex v.v.) để gọi skill tạo video tự động).
+2. **Tài khoản [Vbee TTS] **(https://vbee.vn/ref/5GTJ9TGU ) (App ID + Access Token) để sinh giọng đọc (có thể tích hợp thêm các TTS khác nếu muốn).
 3. **Node.js** ≥ 18
 4. **FFmpeg & FFprobe** trong `PATH` — cần để đo độ dài audio và render video
 
@@ -176,10 +176,10 @@ Repo mở cho việc nhân bản/tuỳ biến. Nếu thêm video mới hoặc s�
 
 Xem các mẫu tạo video khác tại:
 
-- Link repo: 🔗 [github.com/Cuongyd196/auto-video-gen](https://github.com/Cuongyd196/auto-video-gen)
+- Link repo tạo video từ 1 đường Link/Bài viết: 🔗 [github.com/Cuongyd196/auto-video-gen](https://github.com/Cuongyd196/auto-video-gen)
 - 1 repo tương tự sử dụng Remotion: 🔗 [github.com/Cuongyd196/remotion-cuongit-template](https://github.com/Cuongyd196/remotion-cuongit-template)
 
-Các video mẫu mình đã làm, các bạn có thể xem trong Reels hoặc TikTok, video hay vẫn lên xu hướng được mấy chục k view:
+Các video mẫu mình đã làm, các bạn có thể xem trong Reels hoặc TikTok:
 
 - 📹 Facebook: [www.facebook.com/cuongit96/reels/](https://www.facebook.com/cuongit96/reels/)
 - 📹 TikTok: [www.tiktok.com/@cuongit96](https://www.tiktok.com/@cuongit96)
@@ -193,7 +193,7 @@ Chúc các bạn 1 ngày làm việc hiệu quả.
 
 Nếu hữu ích với các bạn thì cho mình 1 star GitHub nhé 🌟
 
-Nếu muốn ủng hộ mình 1 ly cà phê: buymeacoffee.com/cuongit96/gallery/4959449
+Nếu muốn ủng hộ mình 1 ly cà phê: [buymeacoffee.com/cuongit96/gallery/4959449](https://buymeacoffee.com/cuongit96/gallery/4959449)
 
 ## 📄 License
 
