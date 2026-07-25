@@ -184,6 +184,13 @@ Các video mẫu mình đã làm, các bạn có thể xem trong Reels hoặc Ti
 - 📹 Facebook: [www.facebook.com/cuongit96/reels/](https://www.facebook.com/cuongit96/reels/)
 - 📹 TikTok: [www.tiktok.com/@cuongit96](https://www.tiktok.com/@cuongit96)
 
+Mình tạo nhóm này cho các bạn trao đổi về Làm Video với AI nhé.
+Với các repo mình công khai, có vướng mắc mình sẽ giải đáp cho các bạn.
+Chúc các bạn 1 ngày làm việc hiệu quả.
+
+- 👥 Nhóm trên Facebook: [facebook.com/groups/1010029065373486](https://www.facebook.com/groups/1010029065373486/)
+- 👥 Nhóm trên Zalo: [zalo.me/g/8bfeotyh5ewtkzxmp5gt](https://zalo.me/g/8bfeotyh5ewtkzxmp5gt)
+
 Nếu hữu ích với các bạn thì cho mình 1 star GitHub nhé 🌟
 
 Nếu muốn ủng hộ mình 1 ly cà phê: buymeacoffee.com/cuongit96/gallery/4959449

@@ -185,6 +185,13 @@ Sample videos I've made — you can find them on Reels or TikTok, some of them h
 - 📹 Facebook: [www.facebook.com/cuongit96/reels/](https://www.facebook.com/cuongit96/reels/)
 - 📹 TikTok: [www.tiktok.com/@cuongit96](https://www.tiktok.com/@cuongit96)
 
+I started this group for everyone to discuss MAKING VIDEOS WITH AI.
+For the repos I make public, I'll help answer any questions you run into.
+Wishing you a productive day.
+
+- 👥 Facebook group: [facebook.com/groups/1010029065373486](https://www.facebook.com/groups/1010029065373486/)
+- 👥 Zalo group: [zalo.me/g/8bfeotyh5ewtkzxmp5gt](https://zalo.me/g/8bfeotyh5ewtkzxmp5gt)
+
 If this was useful to you, a GitHub star would be appreciated 🌟
 
 If you'd like to support me with a coffee: https://buymeacoffee.com/cuongit96
