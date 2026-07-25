@@ -95,9 +95,9 @@ Mỗi video trong `videos/` là một project HyperFrames **hoàn toàn độc l
 
 ## 🛠️ Yêu cầu hệ thống
 1. **AI coding agent** (Claude Code, Cursor, Codex v.v.) để gọi skill tạo video tự động).
-2. **Tài khoản [Vbee TTS] **(https://vbee.vn/ref/5GTJ9TGU ) (App ID + Access Token) để sinh giọng đọc (có thể tích hợp thêm các TTS khác nếu muốn).
-3. **Node.js** ≥ 18
-4. **FFmpeg & FFprobe** trong `PATH` — cần để đo độ dài audio và render video
+2. **Tài khoản [Vbee TTS] (https://vbee.vn/ref/5GTJ9TGU )** (App ID + Access Token) để sinh giọng đọc (có thể tích hợp thêm các TTS khác nếu muốn).
+3. **Node.js** ≥ 18 — tải tại [nodejs.org/en/download](https://nodejs.org/en/download)
+4. **FFmpeg & FFprobe** trong `PATH` — cần để đo độ dài audio và render video. Hướng dẫn cài đặt: [ffmpeg.org/download.html](https://ffmpeg.org/download.html) (Windows có thể dùng `winget install ffmpeg` hoặc `choco install ffmpeg`; macOS dùng `brew install ffmpeg`; Linux dùng `apt install ffmpeg`)
 
 
 ## 🚀 Bắt đầu
