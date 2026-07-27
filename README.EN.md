@@ -81,6 +81,7 @@ comparison-video/
 ├── docs/previews/                     ← static preview images used in the README
 ├── .env                                ← shared Vbee credentials (create yourself, not committed)
 ├── .claude/skills/create-video/       ← Claude Code skill: create a new video following the template
+├── .agents/skills/create-video/       ← Antigravity skill: same workflow, for Antigravity / Antigravity CLI
 └── videos/
     ├── thien-thach-vs-sao-bang/       ← 1 video = 1 independent HyperFrames project
     │   ├── package.json, hyperframes.json, meta.json, index.html
@@ -134,7 +135,18 @@ a 12-line script (unless `AUTO_CREATE_VIDEO=1` — see step 1), initializes the 
 VO narration, builds the composition per `DESIGN.md`, and runs `npm run check` — see details in
 [`.claude/skills/create-video/SKILL.md`](.claude/skills/create-video/SKILL.md).
 
-Not using Claude Code, or want to run each step manually — follow the section below:
+**Using Google Antigravity?** An equivalent skill ships at
+[`.agents/skills/create-video/`](.agents/skills/create-video/) — clone this repo and Antigravity picks
+it up automatically, no install needed. You don't type a skill name, just ask normally:
+
+```
+Make a comparison video about Dev and DevOps
+```
+
+See [`.agents/skills/create-video/README.md`](.agents/skills/create-video/README.md) for installing it
+globally and how it differs from the Claude Code version.
+
+Not using either agent, or want to run each step manually — follow the section below:
 
 <details>
 <summary>Manual steps (without the skill)</summary>

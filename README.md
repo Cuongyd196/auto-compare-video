@@ -80,6 +80,7 @@ comparison-video/
 ├── docs/previews/                     ← ảnh preview tĩnh dùng trong README
 ├── .env                                ← Vbee credentials dùng chung (tự tạo, không commit)
 ├── .claude/skills/create-video/       ← skill Claude Code: tạo video mới theo đúng template
+├── .agents/skills/create-video/       ← skill Antigravity: cùng quy trình, cho Antigravity / Antigravity CLI
 └── videos/
     ├── thien-thach-vs-sao-bang/       ← 1 video = 1 project HyperFrames độc lập
     │   ├── package.json, hyperframes.json, meta.json, index.html
@@ -133,7 +134,18 @@ Chỉ cần lệnh này là skill tự động làm hết phần còn lại: h�
 composition đúng theo `DESIGN.md`, và chạy `npm run check` — xem chi tiết trong
 [`.claude/skills/create-video/SKILL.md`](.claude/skills/create-video/SKILL.md).
 
-Không dùng Claude Code, hoặc muốn tự chạy từng bước thủ công — làm theo phần dưới đây:
+**Dùng Google Antigravity?** Skill tương đương đã có sẵn ở
+[`.agents/skills/create-video/`](.agents/skills/create-video/) — clone repo về là Antigravity tự
+nhận, không cần cài gì. Không cần gõ tên skill, chỉ cần nói bình thường:
+
+```
+Làm video so sánh Dev và DevOps
+```
+
+Xem [`.agents/skills/create-video/README.md`](.agents/skills/create-video/README.md) để biết cách
+cài global cho mọi project và khác biệt so với bản Claude Code.
+
+Không dùng AI agent nào ở trên, hoặc muốn tự chạy từng bước thủ công — làm theo phần dưới đây:
 
 <details>
 <summary>Các bước thủ công (không dùng skill)</summary>
