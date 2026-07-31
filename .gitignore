@@ -21,7 +21,6 @@ snapshots/
 # Only these two videos are meant to be pushed to this repo; every other
 # videos/<name>/ directory (new topics, experiments, etc.) stays local-only.
 # Add a matching "!videos/<name>/" line here if another video should be shared.
-videos/*
 !videos/dev-vs-devops/
 !videos/thien-thach-vs-sao-bang/
 
