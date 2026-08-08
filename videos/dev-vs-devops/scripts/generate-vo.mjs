@@ -27,12 +27,15 @@ function loadEnv() {
 
 const env = loadEnv();
 
+// CLI helper: returns the value of `--name=value` from process.argv, or null.
+function getCliFlag(name) {
+  const arg = process.argv.find((a) => a.startsWith(`${name}=`));
+  return arg ? arg.split("=")[1] : null;
+}
+
 // Provider resolution: --provider CLI flag > TTS_PROVIDER env var > "vbee" default.
 function resolveProvider() {
-  const cliFlag = process.argv.find((a) => a.startsWith("--provider="));
-  const fromCli = cliFlag ? cliFlag.split("=")[1] : null;
-  const fromEnv = env.TTS_PROVIDER;
-  const provider = (fromCli || fromEnv || "vbee").toLowerCase();
+  const provider = (getCliFlag("--provider") || env.TTS_PROVIDER || "vbee").toLowerCase();
   if (provider !== "vbee" && provider !== "elevenlabs") {
     throw new Error(
       `Invalid TTS_PROVIDER: "${provider}". Must be "vbee" or "elevenlabs".`,
@@ -59,21 +62,20 @@ const ELEVENLABS_VOICE_ID = env.ELEVENLABS_VOICE_ID;
 // tags. Use eleven_flash_v2_5 for the cheapest Vietnamese-capable option.
 const ELEVENLABS_MODEL_ID = env.ELEVENLABS_MODEL || "eleven_v3";
 
-// Per-1k-character USD rates by model (Aug 2026). ElevenLabs charges by
-// characters, not by audio duration.
-const ELEVENLABS_COST_PER_1K_CHARS = {
-  eleven_v3: 0.10,
-  eleven_multilingual_v2: 0.10, // ⚠ does NOT support Vietnamese
-  eleven_flash_v2_5: 0.05, // ✓ Vietnamese-capable, recommended for budget
-  eleven_turbo_v2_5: 0.05, // ⚠ deprecated — use eleven_flash_v2_5 instead
-};
-
-// Soft warnings fired at startup when the user picks a model with caveats.
-const ELEVENLABS_MODEL_WARNINGS = {
-  eleven_turbo_v2_5:
-    "eleven_turbo_v2_5 is deprecated. Switch to eleven_flash_v2_5 for the same price and lower latency.",
-  eleven_multilingual_v2:
-    "eleven_multilingual_v2 does NOT support Vietnamese. Switch to eleven_v3 (flagship) or eleven_flash_v2_5 (cheapest).",
+// Registry of supported ElevenLabs TTS models (Aug 2026).
+// cost = USD per 1000 chars (API billing). warning = soft message printed at
+// startup, or null. Adding/removing a model = one row.
+const ELEVENLABS_MODELS = {
+  eleven_v3: { cost: 0.10, warning: null },
+  eleven_flash_v2_5: { cost: 0.05, warning: null },
+  eleven_multilingual_v2: {
+    cost: 0.10,
+    warning: "does NOT support Vietnamese. Switch to eleven_v3 (flagship) or eleven_flash_v2_5 (cheapest).",
+  },
+  eleven_turbo_v2_5: {
+    cost: 0.05,
+    warning: "is deprecated. Switch to eleven_flash_v2_5 for the same price and lower latency.",
+  },
 };
 
 if (PROVIDER === "elevenlabs") {
@@ -84,15 +86,16 @@ if (PROVIDER === "elevenlabs") {
         "(needs ELEVENLABS_API_KEY) to browse available voices and download audio previews.",
     );
   }
-  if (!(ELEVENLABS_MODEL_ID in ELEVENLABS_COST_PER_1K_CHARS)) {
+  if (!(ELEVENLABS_MODEL_ID in ELEVENLABS_MODELS)) {
     throw new Error(
-      `Unknown ELEVENLABS_MODEL: "${ELEVENLABS_MODEL_ID}". Use eleven_v3, eleven_multilingual_v2, eleven_flash_v2_5, or eleven_turbo_v2_5.`,
+      `Unknown ELEVENLABS_MODEL: "${ELEVENLABS_MODEL_ID}". Use one of: ${Object.keys(ELEVENLABS_MODELS).join(", ")}.`,
     );
   }
-  if (ELEVENLABS_MODEL_ID in ELEVENLABS_MODEL_WARNINGS) {
+  const modelWarning = ELEVENLABS_MODELS[ELEVENLABS_MODEL_ID].warning;
+  if (modelWarning) {
     // console.log (not .warn) so the message goes to stdout and survives in
     // CI logs that only pipe stdout.
-    console.log(`⚠ ${ELEVENLABS_MODEL_WARNINGS[ELEVENLABS_MODEL_ID]}`);
+    console.log(`⚠ ${ELEVENLABS_MODEL_ID} ${modelWarning}`);
   }
 }
 
@@ -231,8 +234,10 @@ async function listElevenLabsVoices({ search } = {}) {
   }
   const all = [];
   let startAfter = null;
-  // Paginate via /v2/voices (has_more + last_sort_id). Default sort newest-first.
-  while (true) {
+  // Paginate via /v2/voices (has_more + last_sort_id). MAX_PAGES caps the walk
+  // in case the API ever returns a stuck cursor.
+  const MAX_PAGES = 100;
+  for (let page = 0; page < MAX_PAGES; page++) {
     const url = new URL("https://api.elevenlabs.io/v2/voices");
     url.searchParams.set("page_size", "100");
     if (search) url.searchParams.set("search", search);
@@ -318,8 +323,7 @@ async function downloadVoicePreviews(voices) {
 }
 
 async function listVoicesMode() {
-  const searchFlag = process.argv.find((a) => a.startsWith("--search="));
-  const search = searchFlag ? searchFlag.split("=")[1] : null;
+  const search = getCliFlag("--search");
   const voices = await listElevenLabsVoices({ search });
   printVoiceTable(voices);
   const { saved, previewDir } = await downloadVoicePreviews(voices);
@@ -386,7 +390,7 @@ async function main() {
   console.log("Done. Durations written to assets/vo/durations.json");
 
   if (PROVIDER === "elevenlabs" && elevenLabsChars > 0) {
-    const rate = ELEVENLABS_COST_PER_1K_CHARS[ELEVENLABS_MODEL_ID];
+    const rate = ELEVENLABS_MODELS[ELEVENLABS_MODEL_ID].cost;
     const cost = (elevenLabsChars / 1000) * rate;
     console.log(
       `ElevenLabs: ${elevenLabsChars} chars × $${rate}/1k = $${cost.toFixed(4)} (model: ${ELEVENLABS_MODEL_ID})`,
