@@ -61,6 +61,10 @@ const ELEVENLABS_VOICE_ID = env.ELEVENLABS_VOICE_ID;
 // Default to eleven_v3 — the current flagship, supports Vietnamese + audio
 // tags. Use eleven_flash_v2_5 for the cheapest Vietnamese-capable option.
 const ELEVENLABS_MODEL_ID = env.ELEVENLABS_MODEL || "eleven_v3";
+// ISO 639-1 language code sent to ElevenLabs to lock pronunciation. Default
+// "vi" — this project is Vietnamese narration. multilingual_v2 / turbo_v2_5
+// silently ignore it per ElevenLabs docs; v3 / flash_v2_5 honor it.
+const ELEVENLABS_LANGUAGE_CODE = env.ELEVENLABS_LANGUAGE_CODE || "vi";
 
 // Registry of supported ElevenLabs TTS models (Aug 2026).
 // cost = USD per 1000 chars (API billing). warning = soft message printed at
@@ -201,6 +205,7 @@ async function generateSpeechElevenLabs(text) {
     body: JSON.stringify({
       text,
       model_id: ELEVENLABS_MODEL_ID,
+      language_code: ELEVENLABS_LANGUAGE_CODE,
       voice_settings: ELEVENLABS_VOICE_SETTINGS,
     }),
   });

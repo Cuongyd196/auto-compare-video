@@ -25,6 +25,7 @@ Vietnamese nếu muốn).
 | `ELEVENLABS_API_KEY`   | Có (khi dùng)  | API key từ ElevenLabs dashboard                      |
 | `ELEVENLABS_VOICE_ID`  | Có (khi dùng)  | Voice ID từ Voice Library (chuỗi opaque, vd `pNInz...`) |
 | `ELEVENLABS_MODEL`     | Không          | Tên model. Mặc định `eleven_v3` (flagship, hỗ trợ Việt + audio tags). Xem mục 6 |
+| `ELEVENLABS_LANGUAGE_CODE` | Không       | ISO 639-1 (`vi`, `en`, `ja`, ...). Mặc định `vi`. Multilingual v2 / turbo v2.5 bỏ qua; v3 / flash v2.5 dùng để lock pronunciation. |
 | `TTS_PROVIDER`         | Không          | `vbee` (mặc định) hoặc `elevenlabs` — chọn provider   |
 
 Cờ CLI ghi đè `TTS_PROVIDER` cho một lần chạy:
@@ -81,6 +82,7 @@ xi-api-key: <ELEVENLABS_API_KEY>
 |----------------------|----------|----------------------------------------------------|
 | `text`               | Yes      | Nội dung text cần chuyển thành giọng nói           |
 | `model_id`           | Yes      | Model TTS. Xem mục 6                               |
+| `language_code`      | No       | ISO 639-1 (`vi` mặc định). V3 / flash_v2_5 dùng để lock pronunciation; multilingual_v2 / turbo_v2_5 bỏ qua. |
 | `voice_settings`     | No       | Bộ tuning giọng. Xem mục 5                         |
 
 | Tham số (query)      | Mặc định          | Mô tả                                |
