@@ -286,7 +286,7 @@ function printVoiceTable(voices) {
   console.log(header);
   console.log("-".repeat(header.length));
   voices.forEach((v, i) => {
-    const num = (i + 1).padStart(3);
+    const num = String(i + 1).padStart(3);
     const name = (v.name || "?").padEnd(26).slice(0, 26);
     const cat = (v.category || "-").padEnd(12);
     const labels = voiceLabels(v).padEnd(25).slice(0, 25);
