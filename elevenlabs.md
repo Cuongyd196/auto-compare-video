@@ -34,6 +34,9 @@ node scripts/generate-vo.mjs --provider=elevenlabs
 node scripts/generate-vo.mjs --provider=vbee        # ghi đè TTS_PROVIDER nếu set trong .env
 ```
 
+Cờ `--list-voices` (xem mục 7) — liệt kê voice khả dụng + tải preview mp3.
+Không cần `ELEVENLABS_VOICE_ID`, chỉ cần `ELEVENLABS_API_KEY`.
+
 Thêm vào `.env`:
 
 ```env
@@ -157,6 +160,26 @@ khi cost quan trọng hơn chất lượng voice (vd test/preview).
 3. Thử voice bằng preview text — nên dùng text Việt có dấu để kiểm tra tone
 4. Click vào voice → copy **Voice ID** (chuỗi opaque, vd `pNInz6obpgDQGcFmaJgB`)
 5. Paste vào `ELEVENLABS_VOICE_ID` trong `.env`
+
+**Hoặc dùng `--list-voices` của script** (khuyến nghị — nghe thử tại chỗ):
+
+```bash
+# Chỉ cần ELEVENLABS_API_KEY (không cần ELEVENLABS_VOICE_ID)
+node scripts/generate-vo.mjs --list-voices
+```
+
+Script sẽ:
+- Gọi `GET /v1/voices` lấy danh sách voice trong tài khoản ElevenLabs của bạn
+- In bảng với `#`, tên, category (premade/cloned/...), labels (language/gender/accent), voice ID
+- Tải preview mp3 của từng voice về `assets/voice-previews/<slug>-<id8>.mp3`
+- Ghi `assets/voice-previews/voices.json` (map `voice_id` → `{ name, file }`)
+
+Sau đó nghe thử rồi chọn:
+
+```bash
+afplay videos/dev-vs-devops/assets/voice-previews/adam-pNInz6ob.mp3
+# Thấy ưng → copy Voice ID từ bảng trên terminal → paste vào .env
+```
 
 Tip: cùng một voice ID áp dụng cho mọi video trong series (config ở repo root),
 không cần config riêng per video.

@@ -68,7 +68,12 @@ const ELEVENLABS_COST_PER_1K_CHARS = {
 
 if (PROVIDER === "elevenlabs") {
   if (!ELEVENLABS_API_KEY) throw new Error("Missing ELEVENLABS_API_KEY in .env");
-  if (!ELEVENLABS_VOICE_ID) throw new Error("Missing ELEVENLABS_VOICE_ID in .env");
+  if (!ELEVENLABS_VOICE_ID) {
+    throw new Error(
+      "Missing ELEVENLABS_VOICE_ID in .env. Run `node scripts/generate-vo.mjs --list-voices` " +
+        "(needs ELEVENLABS_API_KEY) to browse available voices and download audio previews.",
+    );
+  }
   if (!(ELEVENLABS_MODEL_ID in ELEVENLABS_COST_PER_1K_CHARS)) {
     throw new Error(
       `Unknown ELEVENLABS_MODEL: "${ELEVENLABS_MODEL_ID}". Use eleven_multilingual_v2, eleven_turbo_v2_5, or eleven_flash_v2_5.`,
@@ -198,6 +203,104 @@ async function generateSpeechElevenLabs(text) {
 }
 
 // ============================================================================
+// Voice browser (--list-voices mode): fetch user's available voices from
+// ElevenLabs, print a table, and download preview mp3s to a local folder so
+// the user can `afplay` them before picking one.
+// ============================================================================
+
+async function listElevenLabsVoices() {
+  if (!ELEVENLABS_API_KEY) {
+    throw new Error(
+      "--list-voices needs ELEVENLABS_API_KEY in .env. Register at https://elevenlabs.io first.",
+    );
+  }
+  const res = await fetch("https://api.elevenlabs.io/v1/voices", {
+    headers: { "xi-api-key": ELEVENLABS_API_KEY },
+  });
+  if (!res.ok) throw new Error(`ElevenLabs HTTP ${res.status}: ${res.statusText}`);
+  const data = await res.json();
+  return data.voices || [];
+}
+
+function slugifyName(name) {
+  return (name || "voice")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
+}
+
+function voiceLabels(v) {
+  const l = v.labels;
+  if (!l) return "multilingual";
+  const lang = l.language || "?";
+  const gender = l.gender || "?";
+  const accent = l.accent ? `/${l.accent}` : "";
+  return `${lang}/${gender}${accent}`;
+}
+
+function printVoiceTable(voices) {
+  console.log(`\nFound ${voices.length} voices.\n`);
+  const header =
+    "  #   Name                       Category     Labels                    Voice ID";
+  console.log(header);
+  console.log("-".repeat(header.length));
+  voices.forEach((v, i) => {
+    const num = (i + 1).padStart(3);
+    const name = (v.name || "?").padEnd(26).slice(0, 26);
+    const cat = (v.category || "-").padEnd(12);
+    const labels = voiceLabels(v).padEnd(25).slice(0, 25);
+    console.log(`  ${num} ${name} ${cat} ${labels} ${v.voice_id}`);
+  });
+}
+
+async function downloadVoicePreviews(voices) {
+  const previewDir = path.join(ROOT, "assets", "voice-previews");
+  fs.mkdirSync(previewDir, { recursive: true });
+  const manifest = {};
+  let saved = 0;
+
+  console.log(`\nDownloading previews to ${previewDir} ...`);
+  for (const v of voices) {
+    if (!v.preview_url) {
+      console.log(`  ⊘ ${v.name}: no preview_url`);
+      continue;
+    }
+    const slug = slugifyName(v.name);
+    const outPath = path.join(previewDir, `${slug}-${v.voice_id.slice(0, 8)}.mp3`);
+    try {
+      const r = await fetch(v.preview_url);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      fs.writeFileSync(outPath, Buffer.from(await r.arrayBuffer()));
+      manifest[v.voice_id] = { name: v.name, file: path.basename(outPath) };
+      saved++;
+      console.log(`  ✓ ${v.name}`);
+    } catch (e) {
+      console.log(`  ✗ ${v.name}: ${e.message}`);
+    }
+  }
+
+  fs.writeFileSync(
+    path.join(previewDir, "voices.json"),
+    JSON.stringify(manifest, null, 2),
+  );
+  return { saved, previewDir };
+}
+
+async function listVoicesMode() {
+  const voices = await listElevenLabsVoices();
+  printVoiceTable(voices);
+  const { saved, previewDir } = await downloadVoicePreviews(voices);
+  console.log(`\nSaved ${saved} preview mp3s + voices.json (id → name map) to ${previewDir}`);
+  console.log("\nTo pick a voice:");
+  console.log("  1. Listen: afplay " + path.join(previewDir, "<name>-<id8>.mp3"));
+  console.log("  2. Add the chosen Voice ID from the table above to .env:");
+  console.log("       ELEVENLABS_VOICE_ID=<voice_id>");
+  console.log("\nNote: voices without a `language: vi` label are multilingual and handle");
+  console.log("Vietnamese via the eleven_multilingual_v2 model (default).");
+}
+
+// ============================================================================
 // Shared: probe mp3 duration and write per-video durations.json
 // ============================================================================
 
@@ -215,6 +318,11 @@ async function getDuration(filePath) {
 }
 
 async function main() {
+  if (process.argv.includes("--list-voices")) {
+    await listVoicesMode();
+    return;
+  }
+
   const outDir = path.join(ROOT, "assets", "vo");
   fs.mkdirSync(outDir, { recursive: true });
   const durations = {};
