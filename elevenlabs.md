@@ -24,7 +24,7 @@ Vietnamese nếu muốn).
 |------------------------|----------------|------------------------------------------------------|
 | `ELEVENLABS_API_KEY`   | Có (khi dùng)  | API key từ ElevenLabs dashboard                      |
 | `ELEVENLABS_VOICE_ID`  | Có (khi dùng)  | Voice ID từ Voice Library (chuỗi opaque, vd `pNInz...`) |
-| `ELEVENLABS_MODEL`     | Không          | Tên model. Mặc định `eleven_multilingual_v2`. Xem mục 6 |
+| `ELEVENLABS_MODEL`     | Không          | Tên model. Mặc định `eleven_v3` (flagship, hỗ trợ Việt + audio tags). Xem mục 6 |
 | `TTS_PROVIDER`         | Không          | `vbee` (mặc định) hoặc `elevenlabs` — chọn provider   |
 
 Cờ CLI ghi đè `TTS_PROVIDER` cho một lần chạy:
@@ -35,7 +35,8 @@ node scripts/generate-vo.mjs --provider=vbee        # ghi đè TTS_PROVIDER nế
 ```
 
 Cờ `--list-voices` (xem mục 7) — liệt kê voice khả dụng + tải preview mp3.
-Không cần `ELEVENLABS_VOICE_ID`, chỉ cần `ELEVENLABS_API_KEY`.
+Không cần `ELEVENLABS_VOICE_ID`, chỉ cần `ELEVENLABS_API_KEY`. Thêm `--search=<text>`
+để filter (vd `--search=vietnamese`).
 
 Thêm vào `.env`:
 
@@ -143,15 +144,27 @@ Nếu file size là vấn đề (đo bằng KB/s), drop xuống `mp3_22050_64`.
 
 ## 6. Models & chất lượng tiếng Việt
 
-| Model                        | $/1k chars | Vietnamese | Ghi chú                                  |
-|------------------------------|------------|------------|-------------------------------------------|
-| `eleven_multilingual_v2`     | $0.18      | Tốt        | **Khuyến nghị.** Hỗ trợ tone marks đầy đủ |
-| `eleven_turbo_v2_5`          | $0.09      | Trung bình | Rẻ hơn nhưng phát âm Việt kém chính xác   |
-| `eleven_flash_v2_5`          | $0.05      | Kém        | Rẻ nhất, English-first, không khuyến nghị cho Việt |
+| Model                        | $/1k chars | Vietnamese | Ghi chú |
+|------------------------------|------------|------------|----------|
+| `eleven_v3`                  | $0.10      | ✅ Tốt nhất | **Khuyến nghị cho narration Việt.** Flagship — hỗ trợ audio tags inline như `[laughs]`, `[whispers]`, `<excited>...</excited>`. 70+ ngôn ngữ. |
+| `eleven_flash_v2_5`          | $0.05      | ✅ Tốt      | **Khuyến nghị cho budget.** Vietnamese-capable, ~75ms latency, 40k char limit/re |
+| `eleven_multilingual_v2`     | $0.10      | ❌ KHÔNG    | ⚠ **KHÔNG hỗ trợ tiếng Việt** (chỉ 29 ngôn ngữ, vi không có trong list). Đừng dùng cho narration Việt — giọng sẽ đọc sai tone. |
+| `eleven_turbo_v2_5`          | $0.05      | ⚠ Trung bình | ⚠ **Deprecated.** ElevenLabs khuyến nghị chuyển sang `eleven_flash_v2_5` (cùng giá, latency thấp hơn). Script sẽ in warning nếu vẫn dùng. |
 
-**Lưu ý quan trọng:** `turbo_v2_5` và `flash_v2_5` là English-first — phát âm
-tiếng Việt (đặc biệt tone marks và nguyên âm) sẽ bị degrade đáng kể. Chỉ dùng
-khi cost quan trọng hơn chất lượng voice (vd test/preview).
+**Audio tags (chỉ `eleven_v3`):** thêm inline markers trong text để control emotion
+mà không cần tinh chỉnh voice settings. Ví dụ:
+
+```js
+text: "[whispers]Đây là bí mật.[/whispers] Sau đó [laughs] thật ra không có gì."
+```
+
+Tags hỗ trợ: `[laughs]`, `[laughs harder]`, `[starts laughing]`, `[whispers]`,
+`[sighs]`, `[exhales]`, `[sarcastic]`, `[curious]`, `[excited]`, `[crying]`,
+`[snorts]`, `[clears throat]`, `[pause]`, và nhiều hơn — xem docs.
+
+**Pricing lưu ý:** Giá trên là API rate per 1k characters. ElevenLabs đôi khi
+khuyến mãi Flash/Turbo xuống 0.5 credit/char, nên cost thực tế có thể thấp hơn.
+Verify tại `GET https://api.elevenlabs.io/v1/models` trước khi ship production.
 
 ## 7. Cách chọn voice
 
@@ -166,10 +179,13 @@ khi cost quan trọng hơn chất lượng voice (vd test/preview).
 ```bash
 # Chỉ cần ELEVENLABS_API_KEY (không cần ELEVENLABS_VOICE_ID)
 node scripts/generate-vo.mjs --list-voices
+
+# Lọc trước (vd chỉ Vietnamese-capable):
+node scripts/generate-vo.mjs --list-voices --search=vietnamese
 ```
 
 Script sẽ:
-- Gọi `GET /v1/voices` lấy danh sách voice trong tài khoản ElevenLabs của bạn
+- Gọi `GET /v2/voices` (có pagination qua `has_more`/`last_sort_id` — accounts có nhiều Voice Library voice sẽ hiện hết, không bị cắt ở page đầu)
 - In bảng với `#`, tên, category (premade/cloned/...), labels (language/gender/accent), voice ID
 - Tải preview mp3 của từng voice về `assets/voice-previews/<slug>-<id8>.mp3`
 - Ghi `assets/voice-previews/voices.json` (map `voice_id` → `{ name, file }`)

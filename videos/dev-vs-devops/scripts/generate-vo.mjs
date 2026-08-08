@@ -55,15 +55,25 @@ const SPEED_RATE = 1.1;
 // ElevenLabs-specific env (validated at startup so failures happen before any I/O).
 const ELEVENLABS_API_KEY = env.ELEVENLABS_API_KEY;
 const ELEVENLABS_VOICE_ID = env.ELEVENLABS_VOICE_ID;
-const ELEVENLABS_MODEL_ID =
-  env.ELEVENLABS_MODEL || "eleven_multilingual_v2";
+// Default to eleven_v3 — the current flagship, supports Vietnamese + audio
+// tags. Use eleven_flash_v2_5 for the cheapest Vietnamese-capable option.
+const ELEVENLABS_MODEL_ID = env.ELEVENLABS_MODEL || "eleven_v3";
 
 // Per-1k-character USD rates by model (Aug 2026). ElevenLabs charges by
 // characters, not by audio duration.
 const ELEVENLABS_COST_PER_1K_CHARS = {
-  eleven_multilingual_v2: 0.18,
-  eleven_turbo_v2_5: 0.09,
-  eleven_flash_v2_5: 0.05,
+  eleven_v3: 0.10,
+  eleven_multilingual_v2: 0.10, // ⚠ does NOT support Vietnamese
+  eleven_flash_v2_5: 0.05, // ✓ Vietnamese-capable, recommended for budget
+  eleven_turbo_v2_5: 0.05, // ⚠ deprecated — use eleven_flash_v2_5 instead
+};
+
+// Soft warnings fired at startup when the user picks a model with caveats.
+const ELEVENLABS_MODEL_WARNINGS = {
+  eleven_turbo_v2_5:
+    "eleven_turbo_v2_5 is deprecated. Switch to eleven_flash_v2_5 for the same price and lower latency.",
+  eleven_multilingual_v2:
+    "eleven_multilingual_v2 does NOT support Vietnamese. Switch to eleven_v3 (flagship) or eleven_flash_v2_5 (cheapest).",
 };
 
 if (PROVIDER === "elevenlabs") {
@@ -76,15 +86,20 @@ if (PROVIDER === "elevenlabs") {
   }
   if (!(ELEVENLABS_MODEL_ID in ELEVENLABS_COST_PER_1K_CHARS)) {
     throw new Error(
-      `Unknown ELEVENLABS_MODEL: "${ELEVENLABS_MODEL_ID}". Use eleven_multilingual_v2, eleven_turbo_v2_5, or eleven_flash_v2_5.`,
+      `Unknown ELEVENLABS_MODEL: "${ELEVENLABS_MODEL_ID}". Use eleven_v3, eleven_multilingual_v2, eleven_flash_v2_5, or eleven_turbo_v2_5.`,
     );
+  }
+  if (ELEVENLABS_MODEL_ID in ELEVENLABS_MODEL_WARNINGS) {
+    // console.log (not .warn) so the message goes to stdout and survives in
+    // CI logs that only pipe stdout.
+    console.log(`⚠ ${ELEVENLABS_MODEL_WARNINGS[ELEVENLABS_MODEL_ID]}`);
   }
 }
 
 // TTS input uses phonetic Vietnamese spelling ("Đép" / "Đép Ốp") so Vbee
 // pronounces "Dev" / "DevOps" correctly — on-screen captions in index.html
-// keep the real spelling "Dev" / "DevOps". ElevenLabs multilingual_v2 also
-// reads these phonetic spellings; if it reads them oddly, swap the LINES
+// keep the real spelling "Dev" / "DevOps". ElevenLabs v3 + flash_v2_5 also
+// read these phonetic spellings; if it reads them oddly, swap the LINES
 // for that video.
 const LINES = [
   { id: "line-1", text: "Đây là Đép." },
@@ -208,18 +223,33 @@ async function generateSpeechElevenLabs(text) {
 // the user can `afplay` them before picking one.
 // ============================================================================
 
-async function listElevenLabsVoices() {
+async function listElevenLabsVoices({ search } = {}) {
   if (!ELEVENLABS_API_KEY) {
     throw new Error(
       "--list-voices needs ELEVENLABS_API_KEY in .env. Register at https://elevenlabs.io first.",
     );
   }
-  const res = await fetch("https://api.elevenlabs.io/v1/voices", {
-    headers: { "xi-api-key": ELEVENLABS_API_KEY },
-  });
-  if (!res.ok) throw new Error(`ElevenLabs HTTP ${res.status}: ${res.statusText}`);
-  const data = await res.json();
-  return data.voices || [];
+  const all = [];
+  let startAfter = null;
+  // Paginate via /v2/voices (has_more + last_sort_id). Default sort newest-first.
+  while (true) {
+    const url = new URL("https://api.elevenlabs.io/v2/voices");
+    url.searchParams.set("page_size", "100");
+    if (search) url.searchParams.set("search", search);
+    if (startAfter) url.searchParams.set("start_after", startAfter);
+    const res = await fetch(url, {
+      headers: { "xi-api-key": ELEVENLABS_API_KEY },
+    });
+    if (!res.ok) {
+      throw new Error(`ElevenLabs HTTP ${res.status}: ${res.statusText}`);
+    }
+    const data = await res.json();
+    all.push(...(data.voices || []));
+    if (!data.has_more) break;
+    startAfter = data.last_sort_id;
+    if (!startAfter) break;
+  }
+  return all;
 }
 
 function slugifyName(name) {
@@ -288,7 +318,9 @@ async function downloadVoicePreviews(voices) {
 }
 
 async function listVoicesMode() {
-  const voices = await listElevenLabsVoices();
+  const searchFlag = process.argv.find((a) => a.startsWith("--search="));
+  const search = searchFlag ? searchFlag.split("=")[1] : null;
+  const voices = await listElevenLabsVoices({ search });
   printVoiceTable(voices);
   const { saved, previewDir } = await downloadVoicePreviews(voices);
   console.log(`\nSaved ${saved} preview mp3s + voices.json (id → name map) to ${previewDir}`);
@@ -297,7 +329,8 @@ async function listVoicesMode() {
   console.log("  2. Add the chosen Voice ID from the table above to .env:");
   console.log("       ELEVENLABS_VOICE_ID=<voice_id>");
   console.log("\nNote: voices without a `language: vi` label are multilingual and handle");
-  console.log("Vietnamese via the eleven_multilingual_v2 model (default).");
+  console.log("Vietnamese via the eleven_v3 model (default).");
+  if (search) console.log(`\nFiltered by --search=${search}`);
 }
 
 // ============================================================================
