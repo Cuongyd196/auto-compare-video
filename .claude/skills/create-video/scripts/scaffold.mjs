@@ -8,8 +8,8 @@
 //   4. copy scripts/sync-channel.mjs + scripts/generate-vo.mjs from the reference video
 //   5. wire the sync-channel npm script + pre* hooks into package.json
 //
-// Usage:  node .agents/skills/create-video/scripts/scaffold.mjs <slug> [--repo-root <path>]
-//         node .agents/skills/create-video/scripts/scaffold.mjs <slug> --dry-run
+// Usage:  node .claude/skills/create-video/scripts/scaffold.mjs <slug> [--repo-root <path>]
+//         node .claude/skills/create-video/scripts/scaffold.mjs <slug> --dry-run
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
@@ -41,7 +41,7 @@ const repoRootArg = rootFlag !== -1 ? argv[rootFlag + 1] : null;
 const slug = argv.find((a) => !a.startsWith("--") && a !== repoRootArg);
 
 if (!slug) {
-  fail("Thiếu <slug>. Ví dụ: node .agents/skills/create-video/scripts/scaffold.mjs ram-vs-rom");
+  fail("Thiếu <slug>. Ví dụ: node .claude/skills/create-video/scripts/scaffold.mjs ram-vs-rom");
 }
 if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) {
   fail(`Slug "${slug}" không hợp lệ — dùng kebab-case chữ thường, ví dụ "ram-vs-rom".`);
@@ -50,7 +50,7 @@ if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) {
 // ---------- locate repo root ----------
 // A repo root is any ancestor dir holding both DESIGN.md and videos/. Search upward from
 // cwd first (works when the skill is installed globally too), then fall back to walking up
-// from this script's own location (.agents/skills/create-video/scripts → 4 levels).
+// from this script's own location (.claude/skills/create-video/scripts → 4 levels).
 function isRepoRoot(dir) {
   return (
     fs.existsSync(path.join(dir, "DESIGN.md")) &&

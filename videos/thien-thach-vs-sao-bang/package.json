@@ -12,5 +12,8 @@
     "render": "npx --yes hyperframes@0.7.58 render",
     "prepublish": "npm run sync-channel",
     "publish": "npx --yes hyperframes@0.7.58 publish"
+  },
+  "dependencies": {
+    "edge-tts-universal": "^1.4.0"
   }
 }

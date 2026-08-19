@@ -9,7 +9,7 @@ sang định dạng skill của **Antigravity / Antigravity CLI**.
 .agents/skills/create-video/
 ├── SKILL.md                        ← định nghĩa skill (frontmatter + hướng dẫn)
 ├── scripts/
-│   └── scaffold.mjs                ← tự khởi tạo videos/<slug>/ (bước 2 của quy trình)
+│   └── scaffold.mjs                ← tự khởi tạo videos/<slug>/ (bước 2: init, scripts, deps)
 └── references/
     ├── script-and-timing.md        ← kịch bản 12 dòng + công thức timing + phiên âm TTS
     ├── composition.md              ← quy tắc dựng index.html (caption, màu, font, timeline)
@@ -65,9 +65,16 @@ Muốn chạy hết quy trình tới lúc render xong mà không bị hỏi lạ
 |---|---|---|
 | Vị trí | `.claude/skills/create-video/` | `.agents/skills/create-video/` |
 | Gọi skill | `/create-video <chủ đề>` | so khớp ngữ nghĩa từ câu nói tự nhiên |
-| Bước 2 (khởi tạo) | mô tả từng lệnh để agent chạy tay | `scripts/scaffold.mjs` chạy hộ |
-| Chi tiết dài | nằm hết trong SKILL.md | tách ra `references/` (nạp khi cần) |
-| Phụ thuộc | các skill `/hyperframes*` của Claude Code | tự chứa — chỉ cần HyperFrames CLI qua `npx` |
+| Đường dẫn scaffold trong SKILL.md | `.claude/skills/…/scaffold.mjs` | `.agents/skills/…/scaffold.mjs` |
+| Phụ thuộc | có thể dùng thêm các skill `/hyperframes*` của Claude Code | tự chứa — chỉ cần HyperFrames CLI qua `npx` |
 
-Hai bản giữ **cùng một quy trình 9 bước** và cùng hợp đồng thiết kế trong `DESIGN.md`, nên
+Ngoài 4 điểm trên, **hai bản là bản sao của nhau**: cùng `SKILL.md`, cùng `references/`, cùng
+`scripts/scaffold.mjs`, cùng quy trình 9 bước và cùng hợp đồng thiết kế trong `DESIGN.md` — nên
 video sinh ra từ Antigravity hay Claude Code là giống nhau.
+
+> **Sửa skill thì sửa cả hai bản.** Đồng bộ nhanh (chạy từ root repo):
+>
+> ```bash
+> cp -r .agents/skills/create-video/{SKILL.md,references,scripts} .claude/skills/create-video/
+> sed -i 's|.agents/skills/create-video|.claude/skills/create-video|g' >   .claude/skills/create-video/SKILL.md .claude/skills/create-video/scripts/scaffold.mjs
+> ```

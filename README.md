@@ -42,6 +42,9 @@ Một số demo video ngắn dạng TikTok/Reels/Shorts đã xuất bản:
 |---|---|---|
 | Thiên thạch vs Sao băng | Meteorite vs Meteor | [`videos/thien-thach-vs-sao-bang/`](videos/thien-thach-vs-sao-bang/) |
 | Dev vs DevOps | "Dev xây, DevOps vận hành" | [`videos/dev-vs-devops/`](videos/dev-vs-devops/) |
+| Docker Swarm vs Kubernetes | Container orchestration | [`videos/docker-swarm-vs-k8s/`](videos/docker-swarm-vs-k8s/) |
+| AHA vs BHA | Hoá chất tẩy da chết | [`videos/aha-vs-bha/`](videos/aha-vs-bha/) |
+| TeamViewer vs AnyDesk | Remote desktop | [`videos/teamviewer-vs-anydesk/`](videos/teamviewer-vs-anydesk/) |
 
 ## 📌 Tính năng nổi bật
 
@@ -50,7 +53,7 @@ Một số demo video ngắn dạng TikTok/Reels/Shorts đã xuất bản:
   2. **Phần giữa** — caption chạy chữ động, tô nổi bật từ khóa quan trọng bằng màu định sẵn.
   3. **Nửa dưới** — avatar MC robot 2D với 4 tư thế (chỉ tay trái, chỉ tay phải, nhún vai thắc mắc,
      giải thích), miệng/mắt LED nhấp nháy đồng bộ theo nhịp lời thoại.
-- **Voiceover tự động** — tích hợp **Vbee TTS API**, dùng `ffprobe` đo độ dài thật từng câu để đồng bộ animation GSAP chính xác tới mili-giây (không ước lượng).
+- **Voiceover tự động** — hỗ trợ **2 TTS provider**: **Vbee TTS API** (chất lượng cao, cần tài khoản) và **[Edge TTS](https://github.com/travisvn/edge-tts-universal)** (miễn phí, không cần API key, pure Node.js). Dùng `ffprobe` đo độ dài thật từng câu để đồng bộ animation GSAP chính xác tới mili-giây (không ước lượng).
 - **Font tiếng Việt chuẩn** — Be Vietnam Pro nhúng qua `@font-face` + `unicode-range`, không bị lỗi dấu như khi dùng font mặc định của compiler.
 - **Nhiều video, 1 template** — mỗi video là một project HyperFrames độc lập trong `videos/`, dùng chung thiết kế/credentials, dễ nhân bản cho chủ đề mới.
 
@@ -89,14 +92,19 @@ comparison-video/
     │   ├── scripts/generate-vo.mjs
     │   └── renders/, snapshots/        ← output, không commit
     ├── dev-vs-devops/                 ← cấu trúc tương tự
+    ├── docker-swarm-vs-k8s/
+    ├── aha-vs-bha/
+    ├── teamviewer-vs-anydesk/
     └── <video-mới>/                   ← thêm video mới vào đây
 ```
 
-Mỗi video trong `videos/` là một project HyperFrames **hoàn toàn độc lập** (`npm run dev/check/render/publish` riêng), chỉ dùng chung `.env` Vbee ở root và bộ quy tắc thiết kế trong `DESIGN.md`.
+Mỗi video trong `videos/` là một project HyperFrames **hoàn toàn độc lập** (`npm run dev/check/render/publish` riêng), chỉ dùng chung `.env` ở root và bộ quy tắc thiết kế trong `DESIGN.md`.
 
 ## 🛠️ Yêu cầu hệ thống
 1. **AI coding agent** (Claude Code, Cursor, Codex v.v.) để gọi skill tạo video tự động).
-2. **Tài khoản [Vbee TTS] (https://vbee.vn/?aff=cuongit96)** (App ID + Access Token) để sinh giọng đọc (có thể tích hợp thêm các TTS khác nếu muốn).
+2. **TTS provider** (chọn 1 trong 2):
+   - **[Vbee TTS](https://vbee.vn/?aff=cuongit96)** — chất lượng cao, nhiều giọng Việt, cần tài khoản (App ID + Access Token).
+   - **[Edge TTS](https://github.com/travisvn/edge-tts-universal)** — miễn phí, không cần API key, giọng Microsoft Neural. Đã tích hợp sẵn qua npm (`edge-tts-universal`), không cần cài gì thêm.
 3. **Node.js** ≥ 18 — tải tại [nodejs.org/en/download](https://nodejs.org/en/download)
 4. **FFmpeg & FFprobe** trong `PATH` — cần để đo độ dài audio và render video. Hướng dẫn cài đặt: [ffmpeg.org/download.html](https://ffmpeg.org/download.html) (Windows có thể dùng `winget install ffmpeg` hoặc `choco install ffmpeg`; macOS dùng `brew install ffmpeg`; Linux dùng `apt install ffmpeg`)
 
@@ -112,12 +120,13 @@ cp .env.example .env
 ```
 
 ```env
-VBEE_APP_ID=your_app_id              # Vbee TTS App ID
-VBEE_ACCESS_TOKEN=your_access_token  # Vbee TTS Access Token
-AUTO_CREATE_VIDEO=0                  # 0 = skill create-video dừng lại xác nhận từng bước; 1 = chạy tự động không hỏi lại
-CHANNEL=Cường IT                     # tên kênh/eyebrow tag hiển thị trong mọi video
-VBEE_VOICE_CODE=n_hanoi_male_protrainer_education_vc  # giọng đọc mặc định — xem thêm alias khác trong vbee.md § 5
+TTS_PROVIDER=edge                    # "edge" (miễn phí) hoặc "vbee" (cần tài khoản)
+EDGE_VOICE=vi-VN-NamMinhNeural      # giọng Edge TTS — nam: NamMinhNeural, nữ: HoaiMyNeural
+CHANNEL=Cường IT                     # tên kênh hiển thị trên eyebrow tag
+AUTO_CREATE_VIDEO=0                  # 0 = xác nhận từng bước | 1 = chạy tự động
 ```
+
+> **Mặc định dùng Edge TTS (miễn phí)** — chạy hoàn toàn bằng Node.js (qua [`edge-tts-universal`](https://github.com/travisvn/edge-tts-universal)), không cần Python hay API key. Muốn dùng Vbee TTS (chất lượng cao hơn): đổi `TTS_PROVIDER=vbee` và thêm `VBEE_APP_ID`, `VBEE_ACCESS_TOKEN`, `VBEE_VOICE_CODE` — xem `.env.example` để biết đầy đủ.
 
 `.env` không commit (đã có trong `.gitignore`) — chỉ `.env.example` được đưa lên repo làm mẫu.
 
@@ -198,7 +207,6 @@ Các video mẫu mình đã làm, các bạn có thể xem trong Reels hoặc Ti
 
 Mình tạo nhóm này cho các bạn trao đổi về Làm Video với AI nhé.
 Với các repo mình công khai, có vướng mắc mình sẽ giải đáp cho các bạn.
-Chúc các bạn 1 ngày làm việc hiệu quả.
 
 - 👥 Nhóm trên Facebook: [facebook.com/groups/1010029065373486](https://www.facebook.com/groups/1010029065373486/)
 - 👥 Nhóm trên Zalo: [zalo.me/g/8bfeotyh5ewtkzxmp5gt](https://zalo.me/g/8bfeotyh5ewtkzxmp5gt)
