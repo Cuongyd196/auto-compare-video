@@ -1,8 +1,10 @@
-// One-off Vbee TTS generation for the thien-thach-vs-sao-bang video narration.
-// Reads VBEE_APP_ID / VBEE_ACCESS_TOKEN / VBEE_VOICE_CODE from the repo-root
-// .env (shared across all videos/ in this series), generates one mp3 per
-// caption line, downloads to assets/vo/, and writes assets/vo/durations.json
-// (via ffprobe) so index.html timing can be retimed to real audio length.
+// One-off TTS generation for the thien-thach-vs-sao-bang video narration.
+// Supports two providers via TTS_PROVIDER in repo-root .env:
+//   "vbee" (default) — Vbee TTS API, requires VBEE_APP_ID + VBEE_ACCESS_TOKEN
+//   "edge"           — Microsoft Edge TTS (free, no API key), via edge-tts-universal npm package
+// Generates one mp3 per caption line, downloads to assets/vo/, and writes
+// assets/vo/durations.json (via ffprobe) so index.html timing can be retimed
+// to real audio length.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -24,13 +26,29 @@ function loadEnv() {
   return env;
 }
 
-const { VBEE_APP_ID, VBEE_ACCESS_TOKEN, VBEE_VOICE_CODE } = loadEnv();
-if (!VBEE_APP_ID || !VBEE_ACCESS_TOKEN) {
-  throw new Error("Missing VBEE_APP_ID / VBEE_ACCESS_TOKEN in .env");
+const ENV = loadEnv();
+const TTS_PROVIDER = (ENV.TTS_PROVIDER || "vbee").toLowerCase();
+
+// --- Vbee config (only required when TTS_PROVIDER=vbee) ---
+const VBEE_APP_ID = ENV.VBEE_APP_ID;
+const VBEE_ACCESS_TOKEN = ENV.VBEE_ACCESS_TOKEN;
+const VOICE_CODE = ENV.VBEE_VOICE_CODE || "n_hanoi_male_protrainer_education_vc";
+
+// --- Edge TTS config (only required when TTS_PROVIDER=edge) ---
+const EDGE_VOICE = ENV.EDGE_VOICE || "vi-VN-NamMinhNeural";
+
+const SPEED_RATE = 1.1;
+
+if (TTS_PROVIDER === "vbee") {
+  if (!VBEE_APP_ID || !VBEE_ACCESS_TOKEN) {
+    throw new Error(
+      "TTS_PROVIDER=vbee nhưng thiếu VBEE_APP_ID / VBEE_ACCESS_TOKEN trong .env.\n" +
+        "Điền credentials Vbee, hoặc đổi TTS_PROVIDER=edge để dùng Edge TTS miễn phí.",
+    );
+  }
 }
 
-const VOICE_CODE = VBEE_VOICE_CODE || "n_hanoi_male_protrainer_education_vc";
-const SPEED_RATE = 1.1;
+console.log(`TTS provider: ${TTS_PROVIDER}`);
 
 const LINES = [
   { id: "line-1", text: "Đây là thiên thạch." },
@@ -43,7 +61,29 @@ const LINES = [
   { id: "line-8", text: "Một cái chạm đất, một cái thì không!" },
 ];
 
-async function generateSpeech(text) {
+// ============================================================
+// Edge TTS — Node.js API via edge-tts-universal (no Python needed)
+// ============================================================
+
+function speedRateToEdgeRate(rate) {
+  const pct = Math.round((rate - 1) * 100);
+  return pct >= 0 ? `+${pct}%` : `${pct}%`;
+}
+
+async function generateEdgeSpeech(text, outPath) {
+  const { EdgeTTS } = await import("edge-tts-universal");
+  const rate = speedRateToEdgeRate(SPEED_RATE);
+  const tts = new EdgeTTS(text, EDGE_VOICE, { rate });
+  const result = await tts.synthesize();
+  const audioBuffer = Buffer.from(await result.audio.arrayBuffer());
+  fs.writeFileSync(outPath, audioBuffer);
+}
+
+// ============================================================
+// Vbee TTS — REST API (giữ nguyên logic cũ)
+// ============================================================
+
+async function generateVbeeSpeech(text) {
   const res = await fetch("https://vbee.vn/api/v1/tts", {
     method: "POST",
     headers: {
@@ -101,6 +141,10 @@ async function downloadAudio(url, outPath) {
   fs.writeFileSync(outPath, buf);
 }
 
+// ============================================================
+// Shared
+// ============================================================
+
 async function getDuration(filePath) {
   const { stdout } = await execFileAsync("ffprobe", [
     "-v",
@@ -122,8 +166,14 @@ async function main() {
   for (const line of LINES) {
     const outPath = path.join(outDir, `${line.id}.mp3`);
     process.stdout.write(`Generating ${line.id}: "${line.text}" ... `);
-    const audioUrl = await generateSpeech(line.text);
-    await downloadAudio(audioUrl, outPath);
+
+    if (TTS_PROVIDER === "edge") {
+      await generateEdgeSpeech(line.text, outPath);
+    } else {
+      const audioUrl = await generateVbeeSpeech(line.text);
+      await downloadAudio(audioUrl, outPath);
+    }
+
     const dur = await getDuration(outPath);
     durations[line.id] = dur;
     console.log(`${dur.toFixed(2)}s`);

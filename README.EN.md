@@ -43,6 +43,9 @@ A few short published TikTok/Reels/Shorts demo videos:
 |---|---|---|
 | Meteorite vs Meteor | Meteorite vs Meteor | [`videos/thien-thach-vs-sao-bang/`](videos/thien-thach-vs-sao-bang/) |
 | Dev vs DevOps | "Dev builds, DevOps operates" | [`videos/dev-vs-devops/`](videos/dev-vs-devops/) |
+| Docker Swarm vs Kubernetes | Container orchestration | [`videos/docker-swarm-vs-k8s/`](videos/docker-swarm-vs-k8s/) |
+| AHA vs BHA | Chemical exfoliants | [`videos/aha-vs-bha/`](videos/aha-vs-bha/) |
+| TeamViewer vs AnyDesk | Remote desktop | [`videos/teamviewer-vs-anydesk/`](videos/teamviewer-vs-anydesk/) |
 
 ## 📌 Key Features
 
@@ -51,7 +54,7 @@ A few short published TikTok/Reels/Shorts demo videos:
   2. **Middle section** — animated running caption, highlighting key words with a preset color.
   3. **Bottom half** — a 2D robot MC avatar with 4 poses (point left, point right, curious shrug,
      explain), mouth/eyes LEDs blink in sync with the narration's rhythm.
-- **Automatic voiceover** — integrates the **Vbee TTS API**, uses `ffprobe` to measure each sentence's real duration to sync GSAP animation down to the millisecond (no guesswork).
+- **Automatic voiceover** — supports **2 TTS providers**: **Vbee TTS API** (high quality, requires account) and **[Edge TTS](https://github.com/travisvn/edge-tts-universal)** (free, no API key needed, pure Node.js). Uses `ffprobe` to measure each sentence's real duration to sync GSAP animation down to the millisecond (no guesswork).
 - **Proper Vietnamese font** — Be Vietnam Pro embedded via `@font-face` + `unicode-range`, no diacritic rendering issues like with a compiler's default font.
 - **Many videos, one template** — each video is an independent HyperFrames project under `videos/`, sharing the same design/credentials, easy to clone for a new topic.
 
@@ -79,7 +82,7 @@ comparison-video/
 ├── DESIGN.md                          ← layout/color/font/motion contract — shared by every video
 ├── vbee.md                            ← Vbee TTS API documentation
 ├── docs/previews/                     ← static preview images used in the README
-├── .env                                ← shared Vbee credentials (create yourself, not committed)
+├── .env                                ← shared TTS credentials (create yourself, not committed)
 ├── .claude/skills/create-video/       ← Claude Code skill: create a new video following the template
 ├── .agents/skills/create-video/       ← Antigravity skill: same workflow, for Antigravity / Antigravity CLI
 └── videos/
@@ -90,14 +93,19 @@ comparison-video/
     │   ├── scripts/generate-vo.mjs
     │   └── renders/, snapshots/        ← output, not committed
     ├── dev-vs-devops/                 ← same structure
+    ├── docker-swarm-vs-k8s/
+    ├── aha-vs-bha/
+    ├── teamviewer-vs-anydesk/
     └── <new-video>/                   ← add new videos here
 ```
 
-Each video under `videos/` is a **fully independent** HyperFrames project (its own `npm run dev/check/render/publish`), only sharing the root `.env` Vbee credentials and the design rules in `DESIGN.md`.
+Each video under `videos/` is a **fully independent** HyperFrames project (its own `npm run dev/check/render/publish`), only sharing the root `.env` and the design rules in `DESIGN.md`.
 
 ## 🛠️ Requirements
 1. An AI coding agent (Claude Code, Cursor, Codex, etc.) to invoke the automated video-creation skill.
-2. A **[Vbee TTS](https://vbee.vn/ref/5GTJ9TGU)** account (App ID + Access Token) to generate narration (other TTS providers can be integrated if desired).
+2. **TTS provider** (pick one):
+   - **[Vbee TTS](https://vbee.vn/ref/5GTJ9TGU)** — high quality, many Vietnamese voices, requires an account (App ID + Access Token).
+   - **[Edge TTS](https://github.com/travisvn/edge-tts-universal)** — free, no API key needed, Microsoft Neural voices. Already bundled via npm (`edge-tts-universal`), nothing extra to install.
 3. **Node.js** ≥ 18
 4. **FFmpeg & FFprobe** on your `PATH` — needed to measure audio duration and render video
 
@@ -113,12 +121,13 @@ cp .env.example .env
 ```
 
 ```env
-VBEE_APP_ID=your_app_id              # Vbee TTS App ID
-VBEE_ACCESS_TOKEN=your_access_token  # Vbee TTS Access Token
-AUTO_CREATE_VIDEO=0                  # 0 = the create-video skill pauses to confirm each step; 1 = runs fully automatically
-CHANNEL=Cường IT                     # channel name/eyebrow tag shown in every video
-VBEE_VOICE_CODE=n_hanoi_male_protrainer_education_vc  # default voice — see other aliases in vbee.md § 5
+TTS_PROVIDER=edge                    # "edge" (free) or "vbee" (requires account)
+EDGE_VOICE=vi-VN-NamMinhNeural      # Edge TTS voice — male: NamMinhNeural, female: HoaiMyNeural
+CHANNEL=Cường IT                     # channel name shown on the eyebrow tag
+AUTO_CREATE_VIDEO=0                  # 0 = confirm each step | 1 = run automatically
 ```
+
+> **Uses Edge TTS (free) by default** — runs entirely in Node.js (via [`edge-tts-universal`](https://github.com/travisvn/edge-tts-universal)), no Python or API key needed. For Vbee TTS (higher quality): set `TTS_PROVIDER=vbee` and add `VBEE_APP_ID`, `VBEE_ACCESS_TOKEN`, `VBEE_VOICE_CODE` — see `.env.example` for the full list.
 
 `.env` is not committed (already in `.gitignore`) — only `.env.example` is checked into the repo as a template.
 
@@ -199,7 +208,6 @@ Sample videos I've made — you can find them on Reels or TikTok, some of them h
 
 I started this group for everyone to discuss MAKING VIDEOS WITH AI.
 For the repos I make public, I'll help answer any questions you run into.
-Wishing you a productive day.
 
 - 👥 Facebook group: [facebook.com/groups/1010029065373486](https://www.facebook.com/groups/1010029065373486/)
 - 👥 Zalo group: [zalo.me/g/8bfeotyh5ewtkzxmp5gt](https://zalo.me/g/8bfeotyh5ewtkzxmp5gt)

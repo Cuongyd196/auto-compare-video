@@ -3,7 +3,7 @@ name: create-video
 description: >
   Tạo một video MỚI cho series "so sánh / phân biệt kiến thức" của repo này — clip dọc
   TikTok/Reels/Shorts 30-40s, layout 3-zone cố định theo DESIGN.md, voiceover tiếng Việt
-  sinh bằng Vbee TTS, dựng bằng HyperFrames. Dùng skill này khi người dùng nói "làm video
+  sinh bằng Edge TTS (mặc định, miễn phí) hoặc Vbee TTS, dựng bằng HyperFrames. Dùng skill này khi người dùng nói "làm video
   so sánh X vs Y", "phân biệt X và Y", "thêm video mới vào series", "tạo video so sánh
   kiến thức", hoặc yêu cầu bất kỳ video nào theo đúng format sẵn có của repo (thư mục
   videos/<slug>/). KHÔNG dùng cho video ngoài format này (promo sản phẩm, video từ URL,
@@ -17,7 +17,7 @@ description: >
 Sinh ra một thư mục `videos/<slug>/` hoàn chỉnh, tự chạy được (`npm run check` sạch,
 `npm run render` ra MP4), theo đúng layout/nhịp cố định của series: 2 card khái niệm ở nửa
 trên, caption chạy từng dòng ở giữa, avatar robot MC ở nửa dưới; kịch bản 12 dòng, tổng
-30-40s, voiceover Vbee TTS đo thời lượng thật để khớp animation.
+30-40s, voiceover TTS đo thời lượng thật để khớp animation.
 
 Mỗi video là một project HyperFrames độc lập. **Chỉ đổi nội dung — không đổi layout.**
 
@@ -30,7 +30,7 @@ Mọi đường dẫn dưới đây tính từ **root repo** (thư mục chứa 
 | `DESIGN.md` | Hợp đồng layout / màu / font / motion 3-zone. **Bất biến** cho cả series. |
 | `AGENTS.md` | Quy tắc chung của project HyperFrames (data-attributes, `class="clip"`, timeline paused…). |
 | `vbee.md` | Tài liệu Vbee TTS API + danh sách `voice_code`. |
-| `.env` (root, **dùng chung**) | `VBEE_APP_ID`, `VBEE_ACCESS_TOKEN`, `VBEE_VOICE_CODE`, `CHANNEL`, `AUTO_CREATE_VIDEO`. Mẫu: `.env.example`. |
+| `.env` (root, **dùng chung**) | `TTS_PROVIDER`, `VBEE_APP_ID`, `VBEE_ACCESS_TOKEN`, `VBEE_VOICE_CODE`, `EDGE_VOICE`, `CHANNEL`, `AUTO_CREATE_VIDEO`. Mẫu: `.env.example`. |
 | `videos/dev-vs-devops/` | **Project tham chiếu chính** — copy CSS/HTML/helper/scripts từ đây. |
 | `videos/thien-thach-vs-sao-bang/` | Video đầu tiên + `BRIEF.md` bản đầy đủ. |
 
@@ -96,7 +96,14 @@ Script làm hộ toàn bộ phần cơ học, dễ sai nếu làm tay:
 3. Xoá `CLAUDE.md` / `AGENTS.md` mà `init` sinh ra trong thư mục video (trùng với bản ở root)
 4. Copy `scripts/sync-channel.mjs` + `scripts/generate-vo.mjs` từ project tham chiếu
 5. Nối các npm script `sync-channel` + hook `predev` / `precheck` / `prerender` / `prepublish`
-   vào `package.json`
+   vào `package.json`, kèm `dependencies` của video tham chiếu (`edge-tts-universal`)
+
+Sau khi scaffold xong, cài dependencies trước khi sinh VO:
+
+```bash
+cd videos/<slug>
+npm install
+```
 
 Nếu script lỗi hoặc môi trường không cho chạy, xem `references/scaffold-manual.md` để làm tay
 đúng từng bước.
@@ -110,6 +117,17 @@ Sửa `videos/<slug>/scripts/generate-vo.mjs`:
   riêng cho video mới.
 - **Giữ nguyên** `VOICE_CODE = VBEE_VOICE_CODE || "n_hanoi_male_protrainer_education_vc"` —
   giọng đọc lấy từ `.env`, **không hardcode** giọng khác trong script.
+
+Script hỗ trợ 2 provider, chọn bằng `TTS_PROVIDER` trong `.env` ở root:
+
+| `TTS_PROVIDER` | Cần gì | Giọng đọc |
+|---|---|---|
+| `edge` (mặc định trong `.env.example`) | không cần API key — pure Node.js qua `edge-tts-universal` (dependency của video) | `EDGE_VOICE`, mặc định `vi-VN-NamMinhNeural` (nữ: `vi-VN-HoaiMyNeural`) |
+| `vbee` | `VBEE_APP_ID` + `VBEE_ACCESS_TOKEN` | `VBEE_VOICE_CODE`, mặc định `n_hanoi_male_protrainer_education_vc` |
+
+Fallback trong code là `vbee` (khi `.env` không đặt `TTS_PROVIDER`) — nhưng `.env.example` đặt
+`edge` để chạy được ngay không cần tài khoản. Script in ra `TTS provider: <tên>` khi chạy — kiểm
+tra dòng này nếu VO ra sai giọng.
 
 ```bash
 cd videos/<slug>
@@ -228,4 +246,5 @@ workflow HyperFrames chung.
   dấu tiếng Việt sẽ vỡ.
 - **Không** dùng `Math.random()` / `Date.now()` / network fetch trong composition — render phải
   tất định.
-- **Không** hardcode `voice_code` hay `CHANNEL` trực tiếp trong script/HTML.
+- **Không** hardcode `voice_code`, `EDGE_VOICE`, `TTS_PROVIDER` hay `CHANNEL` trực tiếp trong
+  script/HTML — tất cả đọc từ `.env` ở root.
