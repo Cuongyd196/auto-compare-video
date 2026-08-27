@@ -41,10 +41,7 @@ Một số demo video ngắn dạng TikTok/Reels/Shorts đã xuất bản:
 | Video | Chủ đề | Thư mục |
 |---|---|---|
 | Thiên thạch vs Sao băng | Meteorite vs Meteor | [`videos/thien-thach-vs-sao-bang/`](videos/thien-thach-vs-sao-bang/) |
-| Dev vs DevOps | "Dev xây, DevOps vận hành" | [`videos/dev-vs-devops/`](videos/dev-vs-devops/) |
-| Docker Swarm vs Kubernetes | Container orchestration | [`videos/docker-swarm-vs-k8s/`](videos/docker-swarm-vs-k8s/) |
-| AHA vs BHA | Hoá chất tẩy da chết | [`videos/aha-vs-bha/`](videos/aha-vs-bha/) |
-| TeamViewer vs AnyDesk | Remote desktop | [`videos/teamviewer-vs-anydesk/`](videos/teamviewer-vs-anydesk/) |
+| Dev vs DevOps | "Dev xây, DevOps vận hành" | [`videos/dev-vs-devops/`](videos/dev-vs-devops/) 
 
 ## 📌 Tính năng nổi bật
 
@@ -75,7 +72,7 @@ Toàn bộ hợp đồng layout/màu/font/motion nằm trong [`DESIGN.md`](DESIG
 ## 📁 Cấu trúc repo
 
 ```
-comparison-video/
+auto-compare-video/
 ├── README.md, LICENSE                ← bạn đang ở đây
 ├── CLAUDE.md, AGENTS.md               ← hướng dẫn cho AI coding agent (Claude Code, Cursor...)
 ├── DESIGN.md                          ← hợp đồng layout/màu/font/motion — dùng chung mọi video
@@ -92,9 +89,6 @@ comparison-video/
     │   ├── scripts/generate-vo.mjs
     │   └── renders/, snapshots/        ← output, không commit
     ├── dev-vs-devops/                 ← cấu trúc tương tự
-    ├── docker-swarm-vs-k8s/
-    ├── aha-vs-bha/
-    ├── teamviewer-vs-anydesk/
     └── <video-mới>/                   ← thêm video mới vào đây
 ```
 

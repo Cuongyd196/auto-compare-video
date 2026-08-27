@@ -43,9 +43,6 @@ A few short published TikTok/Reels/Shorts demo videos:
 |---|---|---|
 | Meteorite vs Meteor | Meteorite vs Meteor | [`videos/thien-thach-vs-sao-bang/`](videos/thien-thach-vs-sao-bang/) |
 | Dev vs DevOps | "Dev builds, DevOps operates" | [`videos/dev-vs-devops/`](videos/dev-vs-devops/) |
-| Docker Swarm vs Kubernetes | Container orchestration | [`videos/docker-swarm-vs-k8s/`](videos/docker-swarm-vs-k8s/) |
-| AHA vs BHA | Chemical exfoliants | [`videos/aha-vs-bha/`](videos/aha-vs-bha/) |
-| TeamViewer vs AnyDesk | Remote desktop | [`videos/teamviewer-vs-anydesk/`](videos/teamviewer-vs-anydesk/) |
 
 ## 📌 Key Features
 
@@ -76,7 +73,7 @@ series must follow this exact color palette and 3-zone structure to keep the ser
 ## 📁 Repo Structure
 
 ```
-comparison-video/
+auto-compare-video/
 ├── README.md, LICENSE                ← you are here
 ├── CLAUDE.md, AGENTS.md               ← guidance for AI coding agents (Claude Code, Cursor...)
 ├── DESIGN.md                          ← layout/color/font/motion contract — shared by every video
@@ -93,9 +90,6 @@ comparison-video/
     │   ├── scripts/generate-vo.mjs
     │   └── renders/, snapshots/        ← output, not committed
     ├── dev-vs-devops/                 ← same structure
-    ├── docker-swarm-vs-k8s/
-    ├── aha-vs-bha/
-    ├── teamviewer-vs-anydesk/
     └── <new-video>/                   ← add new videos here
 ```
 
