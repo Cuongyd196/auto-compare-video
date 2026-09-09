@@ -3,6 +3,7 @@
 **A short-form educational video template (TikTok/Reels/Shorts)** built on **[HyperFrames](https://hyperframes.heygen.com)** — each video compares a pair of commonly confused concepts, following one fixed layout/pace, only the content changes.
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+[![HyperFrames License: Apache 2.0](https://img.shields.io/badge/HyperFrames-Apache%202.0-blue.svg)](https://github.com/heygen-com/hyperframes/blob/main/LICENSE)
 ![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
 ![Built with HyperFrames](https://img.shields.io/badge/built%20with-HyperFrames-111827)
 ![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff4fa3.svg)
@@ -212,4 +213,5 @@ If you'd like to support me with a coffee: [buymeacoffee.com/cuongit96/gallery/4
 
 ## 📄 License
 
-[MIT](LICENSE) — free to use, modify, and redistribute, just keep the copyright notice.
+- Project template code is licensed under **[MIT](LICENSE)** (free to use and modify).
+- Built on **[HyperFrames](https://github.com/heygen-com/hyperframes)** under the **[Apache 2.0](https://github.com/heygen-com/hyperframes/blob/main/LICENSE)**

@@ -3,6 +3,7 @@
 **Template video giáo dục ngắn (TikTok/Reels/Shorts)** dựng trên **[HyperFrames](https://hyperframes.heygen.com)** — mỗi video so sánh một cặp khái niệm hay bị nhầm lẫn, theo đúng một layout/nhịp cố định, chỉ đổi nội dung.
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+[![HyperFrames License: Apache 2.0](https://img.shields.io/badge/HyperFrames-Apache%202.0-blue.svg)](https://github.com/heygen-com/hyperframes/blob/main/LICENSE)
 ![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
 ![Built with HyperFrames](https://img.shields.io/badge/built%20with-HyperFrames-111827)
 ![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff4fa3.svg)
@@ -211,4 +212,5 @@ Nếu muốn ủng hộ mình 1 ly cà phê: [buymeacoffee.com/cuongit96/gallery
 
 ## 📄 License
 
-[MIT](LICENSE) — tự do dùng, sửa, phát hành lại, chỉ cần giữ thông báo bản quyền.
+- Mã nguồn dự án phát hành theo giấy phép **[MIT](LICENSE)**.
+- Dự án xây dựng dựa trên **[HyperFrames](https://github.com/heygen-com/hyperframes)** thuộc giấy phép **[Apache 2.0](https://github.com/heygen-com/hyperframes/blob/main/LICENSE)**.
