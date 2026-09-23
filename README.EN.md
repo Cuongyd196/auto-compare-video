@@ -198,8 +198,9 @@ This repo is open for cloning/customization. If you add a new video or modify th
 
 ## 🔗 See Also
 
-Check out other video-generation templates at:
+Check out related tools and video-generation templates at:
 
+- Offline Vietnamese TTS tool (VieNeu TTS): 🔗 [github.com/Cuongyd196/cit-voice-studio](https://github.com/Cuongyd196/cit-voice-studio)
 - Repo link: 🔗 [github.com/Cuongyd196/auto-video-gen](https://github.com/Cuongyd196/auto-video-gen)
 - A similar repo using Remotion: 🔗 [github.com/Cuongyd196/remotion-cuongit-template](https://github.com/Cuongyd196/remotion-cuongit-template)
 

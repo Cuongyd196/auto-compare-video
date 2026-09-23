@@ -197,8 +197,9 @@ Repo mở cho việc nhân bản/tuỳ biến. Nếu thêm video mới hoặc s�
 
 ## 🔗 Xem thêm
 
-Xem các mẫu tạo video khác tại:
+Xem các dự án và mẫu tạo video khác tại:
 
+- Công cụ sinh giọng đọc tiếng Việt offline (VieNeu TTS): 🔗 [github.com/Cuongyd196/cit-voice-studio](https://github.com/Cuongyd196/cit-voice-studio)
 - Link repo tạo video từ 1 đường Link/Bài viết: 🔗 [github.com/Cuongyd196/auto-video-gen](https://github.com/Cuongyd196/auto-video-gen)
 - 1 repo tương tự sử dụng Remotion: 🔗 [github.com/Cuongyd196/remotion-cuongit-template](https://github.com/Cuongyd196/remotion-cuongit-template)
 
