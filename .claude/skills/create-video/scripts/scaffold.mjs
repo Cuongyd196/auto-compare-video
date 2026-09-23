@@ -207,8 +207,8 @@ const missingEnv = !fs.existsSync(path.join(REPO_ROOT, ".env"));
 console.log(`\n✔ videos/${slug}/ đã sẵn sàng.`);
 if (missingEnv) {
   console.log("\n⚠ Chưa có .env ở root repo — copy .env.example thành .env và điền");
-  console.log("  TTS_PROVIDER trước khi sinh voiceover — edge (miễn phí) chỉ cần EDGE_VOICE,");
-  console.log("  vbee cần thêm VBEE_APP_ID / VBEE_ACCESS_TOKEN.");
+  console.log("  TTS_PROVIDER trước khi sinh voiceover — vieneu (local CIT Voice Studio),");
+  console.log("  edge (miễn phí, chỉ cần EDGE_VOICE), hoặc vbee (cần VBEE_APP_ID / VBEE_ACCESS_TOKEN).");
 }
 console.log("\nBước tiếp theo (skill create-video):");
 console.log(`  0. cd videos/${slug} && npm install   (deps, gồm edge-tts-universal)`);

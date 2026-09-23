@@ -3,7 +3,7 @@ name: create-video
 description: >
   Tạo một video MỚI cho series "so sánh / phân biệt kiến thức" của repo này — clip dọc
   TikTok/Reels/Shorts 30-40s, layout 3-zone cố định theo DESIGN.md, voiceover tiếng Việt
-  sinh bằng Edge TTS (mặc định, miễn phí) hoặc Vbee TTS, dựng bằng HyperFrames. Dùng skill này khi người dùng nói "làm video
+  sinh bằng VieNeu TTS (local), Edge TTS (miễn phí) hoặc Vbee TTS, dựng bằng HyperFrames. Dùng skill này khi người dùng nói "làm video
   so sánh X vs Y", "phân biệt X và Y", "thêm video mới vào series", "tạo video so sánh
   kiến thức", hoặc yêu cầu bất kỳ video nào theo đúng format sẵn có của repo (thư mục
   videos/<slug>/). KHÔNG dùng cho video ngoài format này (promo sản phẩm, video từ URL,
@@ -29,8 +29,9 @@ Mọi đường dẫn dưới đây tính từ **root repo** (thư mục chứa 
 |---|---|
 | `DESIGN.md` | Hợp đồng layout / màu / font / motion 3-zone. **Bất biến** cho cả series. |
 | `AGENTS.md` | Quy tắc chung của project HyperFrames (data-attributes, `class="clip"`, timeline paused…). |
+| `vieneu.md` | Tài liệu VieNeu TTS API (CIT Voice Studio) + danh sách giọng đọc. |
 | `vbee.md` | Tài liệu Vbee TTS API + danh sách `voice_code`. |
-| `.env` (root, **dùng chung**) | `TTS_PROVIDER`, `VBEE_APP_ID`, `VBEE_ACCESS_TOKEN`, `VBEE_VOICE_CODE`, `EDGE_VOICE`, `CHANNEL`, `AUTO_CREATE_VIDEO`. Mẫu: `.env.example`. |
+| `.env` (root, **dùng chung**) | `TTS_PROVIDER`, `VIENEU_API_URL`, `VIENEU_VOICE`, `VIENEU_SPEED`, `VBEE_APP_ID`, `VBEE_ACCESS_TOKEN`, `VBEE_VOICE_CODE`, `EDGE_VOICE`, `CHANNEL`, `AUTO_CREATE_VIDEO`. Mẫu: `.env.example`. |
 | `videos/dev-vs-devops/` | **Project tham chiếu chính** — copy CSS/HTML/helper/scripts từ đây. |
 | `videos/thien-thach-vs-sao-bang/` | Video đầu tiên + `BRIEF.md` bản đầy đủ. |
 

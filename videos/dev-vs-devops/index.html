@@ -440,8 +440,8 @@
     </style>
   </head>
   <body>
-    <div data-hf-id="hf-nu5b" id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="19.9">
-      <section data-hf-id="hf-xtla" id="scene" class="clip" data-start="0" data-duration="19.9" data-track-index="1">
+    <div data-hf-id="hf-nu5b" id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="24.7">
+      <section data-hf-id="hf-xtla" id="scene" class="clip" data-start="0" data-duration="24.7" data-track-index="1">
         <div data-hf-id="hf-dwsk" id="glow-top" class="glow"></div>
         <div data-hf-id="hf-omk6" id="glow-bottom" class="glow"></div>
 
@@ -504,15 +504,15 @@
         </div>
       </section>
 
-      <!-- narration: Vbee TTS, one clip per caption line, direct root children -->
-      <audio data-hf-id="hf-t04g" id="vo-1" src="assets/vo/line-1.mp3" data-start="0.55" data-duration="0.888" data-track-index="20"></audio>
-      <audio data-hf-id="hf-l5fe" id="vo-2" src="assets/vo/line-2.mp3" data-start="1.788" data-duration="1.032" data-track-index="20"></audio>
-      <audio data-hf-id="hf-djpw" id="vo-3" src="assets/vo/line-3.mp3" data-start="3.27" data-duration="1.224" data-track-index="20"></audio>
-      <audio data-hf-id="hf-dea3" id="vo-4" src="assets/vo/line-4.mp3" data-start="4.894" data-duration="2.184" data-track-index="20"></audio>
-      <audio data-hf-id="hf-dau1" id="vo-5" src="assets/vo/line-5.mp3" data-start="7.378" data-duration="2.112" data-track-index="20"></audio>
-      <audio data-hf-id="hf-7ozx" id="vo-6" src="assets/vo/line-6.mp3" data-start="9.89" data-duration="2.448" data-track-index="20"></audio>
-      <audio data-hf-id="hf-7l9y" id="vo-7" src="assets/vo/line-7.mp3" data-start="12.638" data-duration="1.92" data-track-index="20"></audio>
-      <audio data-hf-id="hf-nm1s" id="vo-8" src="assets/vo/line-8.mp3" data-start="14.958" data-duration="3.432" data-track-index="20"></audio>
+      <!-- narration: VieNeu TTS, one clip per caption line, direct root children -->
+      <audio data-hf-id="hf-t04g" id="vo-1" src="assets/vo/line-1.mp3" data-start="0.55" data-duration="0.88" data-track-index="20"></audio>
+      <audio data-hf-id="hf-l5fe" id="vo-2" src="assets/vo/line-2.mp3" data-start="1.78" data-duration="1.04" data-track-index="20"></audio>
+      <audio data-hf-id="hf-djpw" id="vo-3" src="assets/vo/line-3.mp3" data-start="3.27" data-duration="1.36" data-track-index="20"></audio>
+      <audio data-hf-id="hf-dea3" id="vo-4" src="assets/vo/line-4.mp3" data-start="5.03" data-duration="2.80" data-track-index="20"></audio>
+      <audio data-hf-id="hf-dau1" id="vo-5" src="assets/vo/line-5.mp3" data-start="8.18" data-duration="2.72" data-track-index="20"></audio>
+      <audio data-hf-id="hf-7ozx" id="vo-6" src="assets/vo/line-6.mp3" data-start="11.35" data-duration="3.12" data-track-index="20"></audio>
+      <audio data-hf-id="hf-7l9y" id="vo-7" src="assets/vo/line-7.mp3" data-start="14.82" data-duration="2.24" data-track-index="20"></audio>
+      <audio data-hf-id="hf-nm1s" id="vo-8" src="assets/vo/line-8.mp3" data-start="17.51" data-duration="5.68" data-track-index="20"></audio>
     </div>
 
     <script>
@@ -574,18 +574,18 @@
       // outward-right. Always pass opposite-signed magnitudes for a mirrored pose.
 
       // ---------- VO-driven beat timing ----------
-      // Real Vbee clip durations (assets/vo/durations.json) drive every beat —
+      // Real VieNeu clip durations (assets/vo/durations.json) drive every beat —
       // caption pop-in, avatar pose, and the mouth-talk window all key off each
       // clip's actual [start, start+duration], not an estimate.
       const VO = {
-        1: { start: 0.55, dur: 0.888 },
-        2: { start: 1.788, dur: 1.032 },
-        3: { start: 3.27, dur: 1.224 },
-        4: { start: 4.894, dur: 2.184 },
-        5: { start: 7.378, dur: 2.112 },
-        6: { start: 9.89, dur: 2.448 },
-        7: { start: 12.638, dur: 1.92 },
-        8: { start: 14.958, dur: 3.432 },
+        1: { start: 0.55, dur: 0.88 },
+        2: { start: 1.78, dur: 1.04 },
+        3: { start: 3.27, dur: 1.36 },
+        4: { start: 5.03, dur: 2.80 },
+        5: { start: 8.18, dur: 2.72 },
+        6: { start: 11.35, dur: 3.12 },
+        7: { start: 14.82, dur: 2.24 },
+        8: { start: 17.51, dur: 5.68 },
       };
       const capOut = (n) => VO[n].start + VO[n].dur + 0.25;
 
@@ -639,7 +639,7 @@
       talk(VO[8].start, VO[8].start + VO[8].dur);
 
       // ---------- ambient background glows (finite, phase-opposed) ----------
-      const ROOT_DURATION = 19.9;
+      const ROOT_DURATION = 24.7;
       const glowCycle = 3.2;
       const glowReps = Math.max(0, Math.floor(ROOT_DURATION / glowCycle) - 1);
       tl.fromTo(

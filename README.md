@@ -51,7 +51,7 @@ Một số demo video ngắn dạng TikTok/Reels/Shorts đã xuất bản:
   2. **Phần giữa** — caption chạy chữ động, tô nổi bật từ khóa quan trọng bằng màu định sẵn.
   3. **Nửa dưới** — avatar MC robot 2D với 4 tư thế (chỉ tay trái, chỉ tay phải, nhún vai thắc mắc,
      giải thích), miệng/mắt LED nhấp nháy đồng bộ theo nhịp lời thoại.
-- **Voiceover tự động** — hỗ trợ **2 TTS provider**: **Vbee TTS API** (chất lượng cao, cần tài khoản) và **[Edge TTS](https://github.com/travisvn/edge-tts-universal)** (miễn phí, không cần API key, pure Node.js). Dùng `ffprobe` đo độ dài thật từng câu để đồng bộ animation GSAP chính xác tới mili-giây (không ước lượng).
+- **Voiceover tự động** — hỗ trợ **3 TTS provider**: **[VieNeu TTS](vieneu.md)** (chạy local qua CIT Voice Studio, phản hồi nhanh, chất lượng cao 48 kHz), **[Edge TTS](https://github.com/travisvn/edge-tts-universal)** (miễn phí, không cần API key, pure Node.js) và **[Vbee TTS API](vbee.md)** (chất lượng cao, cần tài khoản). Dùng `ffprobe` đo độ dài thật từng câu để đồng bộ animation GSAP chính xác tới mili-giây (không ước lượng).
 - **Font tiếng Việt chuẩn** — Be Vietnam Pro nhúng qua `@font-face` + `unicode-range`, không bị lỗi dấu như khi dùng font mặc định của compiler.
 - **Nhiều video, 1 template** — mỗi video là một project HyperFrames độc lập trong `videos/`, dùng chung thiết kế/credentials, dễ nhân bản cho chủ đề mới.
 
@@ -77,9 +77,10 @@ auto-compare-video/
 ├── README.md, LICENSE                ← bạn đang ở đây
 ├── CLAUDE.md, AGENTS.md               ← hướng dẫn cho AI coding agent (Claude Code, Cursor...)
 ├── DESIGN.md                          ← hợp đồng layout/màu/font/motion — dùng chung mọi video
+├── vieneu.md                          ← tài liệu API VieNeu TTS (CIT Voice Studio)
 ├── vbee.md                            ← tài liệu API Vbee TTS
 ├── docs/previews/                     ← ảnh preview tĩnh dùng trong README
-├── .env                                ← Vbee credentials dùng chung (tự tạo, không commit)
+├── .env                                ← credentials & cấu hình TTS dùng chung (tự tạo, không commit)
 ├── .claude/skills/create-video/       ← skill Claude Code: tạo video mới theo đúng template
 ├── .agents/skills/create-video/       ← skill Antigravity: cùng quy trình, cho Antigravity / Antigravity CLI
 └── videos/
@@ -97,9 +98,10 @@ Mỗi video trong `videos/` là một project HyperFrames **hoàn toàn độc l
 
 ## 🛠️ Yêu cầu hệ thống
 1. **AI coding agent** (Claude Code, Cursor, Codex v.v.) để gọi skill tạo video tự động).
-2. **TTS provider** (chọn 1 trong 2):
-   - **[Vbee TTS](https://vbee.vn/?aff=cuongit96)** — chất lượng cao, nhiều giọng Việt, cần tài khoản (App ID + Access Token).
+2. **TTS provider** (chọn 1 trong 3):
+   - **[VieNeu TTS](vieneu.md)** — chạy local không tốn phí, 20 giọng đọc tự nhiên 48 kHz. **Yêu cầu cài đặt [CIT Voice Studio](https://github.com/Cuongyd196/cit-voice-studio)** và bật server API tại `http://127.0.0.1:8001`.
    - **[Edge TTS](https://github.com/travisvn/edge-tts-universal)** — miễn phí, không cần API key, giọng Microsoft Neural. Đã tích hợp sẵn qua npm (`edge-tts-universal`), không cần cài gì thêm.
+   - **[Vbee TTS](https://vbee.vn/?aff=cuongit96)** — chất lượng cao, nhiều giọng Việt, cần tài khoản (App ID + Access Token). Xem [vbee.md](vbee.md).
 3. **Node.js** ≥ 18 — tải tại [nodejs.org/en/download](https://nodejs.org/en/download)
 4. **FFmpeg & FFprobe** trong `PATH` — cần để đo độ dài audio và render video. Hướng dẫn cài đặt: [ffmpeg.org/download.html](https://ffmpeg.org/download.html) (Windows có thể dùng `winget install ffmpeg` hoặc `choco install ffmpeg`; macOS dùng `brew install ffmpeg`; Linux dùng `apt install ffmpeg`)
 
@@ -115,13 +117,18 @@ cp .env.example .env
 ```
 
 ```env
-TTS_PROVIDER=edge                    # "edge" (miễn phí) hoặc "vbee" (cần tài khoản)
+TTS_PROVIDER=vieneu                  # "vieneu" (local) | "edge" (miễn phí) | "vbee" (cần tài khoản)
+VIENEU_API_URL=http://127.0.0.1:8001 # URL của CIT Voice Studio
+VIENEU_VOICE=Minh Đức                # giọng VieNeu TTS (xem vieneu.md)
 EDGE_VOICE=vi-VN-NamMinhNeural      # giọng Edge TTS — nam: NamMinhNeural, nữ: HoaiMyNeural
 CHANNEL=Cường IT                     # tên kênh hiển thị trên eyebrow tag
 AUTO_CREATE_VIDEO=0                  # 0 = xác nhận từng bước | 1 = chạy tự động
 ```
 
-> **Mặc định dùng Edge TTS (miễn phí)** — chạy hoàn toàn bằng Node.js (qua [`edge-tts-universal`](https://github.com/travisvn/edge-tts-universal)), không cần Python hay API key. Muốn dùng Vbee TTS (chất lượng cao hơn): đổi `TTS_PROVIDER=vbee` và thêm `VBEE_APP_ID`, `VBEE_ACCESS_TOKEN`, `VBEE_VOICE_CODE` — xem `.env.example` để biết đầy đủ.
+> **Hỗ trợ 3 TTS providers linh hoạt**:
+> - **VieNeu TTS**: đổi `TTS_PROVIDER=vieneu`. Để sử dụng, cần cài đặt và khởi chạy server local từ **[CIT Voice Studio](https://github.com/Cuongyd196/cit-voice-studio)** (mặc định tại `http://127.0.0.1:8001`, xem chi tiết tại [`vieneu.md`](vieneu.md)).
+> - **Edge TTS**: đổi `TTS_PROVIDER=edge`, chạy hoàn toàn bằng Node.js qua `edge-tts-universal`.
+> - **Vbee TTS**: đổi `TTS_PROVIDER=vbee` và điền `VBEE_APP_ID`, `VBEE_ACCESS_TOKEN` (xem chi tiết tại [`vbee.md`](vbee.md)).
 
 `.env` không commit (đã có trong `.gitignore`) — chỉ `.env.example` được đưa lên repo làm mẫu.
 
