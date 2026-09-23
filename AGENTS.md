@@ -4,14 +4,13 @@
 
 This repo holds a **series** of short comparison videos, each its own self-contained
 HyperFrames project under `videos/<video-name>/` (own `package.json`, `hyperframes.json`,
-`meta.json`, `index.html`, `assets/`, `scripts/`, `renders/`, `snapshots/`). Root-level files
-(`README.md`, `CLAUDE.md`, `AGENTS.md`, `DESIGN.md`, `vbee.md`) are shared across the whole
+`meta.json`, `index.html`, `assets/`, `scripts/`, `renders/`, `snapshots/`). Root-level files (`README.md`, `CLAUDE.md`, `AGENTS.md`, `DESIGN.md`, `vbee.md`, `vieneu.md`) are shared across the whole
 series — `DESIGN.md` in particular is the fixed layout/style contract every video follows.
 
 **All commands below run with `cwd` inside the specific video's folder**
 (`videos/<video-name>/`), not the repo root — that's where each video's `package.json` lives.
 
-The Vbee TTS credentials (`.env`) live once at the **repo root** and are shared by every
+TTS credentials and configuration (`.env`: VieNeu TTS / Edge TTS / Vbee TTS) live once at the **repo root** and are shared by every
 video's `scripts/generate-vo.mjs`.
 
 To start a new video: create `videos/<new-name>/`, run `hyperframes init` inside it, copy the

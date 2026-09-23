@@ -1,7 +1,8 @@
 // One-off TTS generation for the thien-thach-vs-sao-bang video narration.
-// Supports two providers via TTS_PROVIDER in repo-root .env:
-//   "vbee" (default) — Vbee TTS API, requires VBEE_APP_ID + VBEE_ACCESS_TOKEN
+// Supports three providers via TTS_PROVIDER in repo-root .env:
+//   "vieneu" (local)  — VieNeu TTS API (CIT Voice Studio), fast & high quality local inference
 //   "edge"           — Microsoft Edge TTS (free, no API key), via edge-tts-universal npm package
+//   "vbee"           — Vbee TTS API, requires VBEE_APP_ID + VBEE_ACCESS_TOKEN
 // Generates one mp3 per caption line, downloads to assets/vo/, and writes
 // assets/vo/durations.json (via ffprobe) so index.html timing can be retimed
 // to real audio length.
@@ -27,7 +28,12 @@ function loadEnv() {
 }
 
 const ENV = loadEnv();
-const TTS_PROVIDER = (ENV.TTS_PROVIDER || "vbee").toLowerCase();
+const TTS_PROVIDER = (ENV.TTS_PROVIDER || "vieneu").toLowerCase();
+
+// --- VieNeu TTS config (only required when TTS_PROVIDER=vieneu) ---
+const VIENEU_API_URL = (ENV.VIENEU_API_URL || "http://127.0.0.1:8001").replace(/\/+$/, "");
+const VIENEU_VOICE = ENV.VIENEU_VOICE || "Minh Đức";
+const VIENEU_SPEED = parseFloat(ENV.VIENEU_SPEED) || 1.0;
 
 // --- Vbee config (only required when TTS_PROVIDER=vbee) ---
 const VBEE_APP_ID = ENV.VBEE_APP_ID;
@@ -43,7 +49,7 @@ if (TTS_PROVIDER === "vbee") {
   if (!VBEE_APP_ID || !VBEE_ACCESS_TOKEN) {
     throw new Error(
       "TTS_PROVIDER=vbee nhưng thiếu VBEE_APP_ID / VBEE_ACCESS_TOKEN trong .env.\n" +
-        "Điền credentials Vbee, hoặc đổi TTS_PROVIDER=edge để dùng Edge TTS miễn phí.",
+        "Điền credentials Vbee, hoặc đổi TTS_PROVIDER=vieneu / edge.",
     );
   }
 }
@@ -77,6 +83,32 @@ async function generateEdgeSpeech(text, outPath) {
   const result = await tts.synthesize();
   const audioBuffer = Buffer.from(await result.audio.arrayBuffer());
   fs.writeFileSync(outPath, audioBuffer);
+}
+
+// ============================================================
+// VieNeu TTS — REST API (CIT Voice Studio / VieNeu-TTS)
+// ============================================================
+
+async function generateVieNeuSpeech(text, outPath) {
+  const url = `${VIENEU_API_URL}/api/tts/generate`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      text,
+      voice_id: VIENEU_VOICE || undefined,
+      speed: VIENEU_SPEED,
+      format: "mp3",
+    }),
+  });
+  if (!res.ok) {
+    const errText = await res.text().catch(() => "");
+    throw new Error(`VieNeu TTS HTTP ${res.status}: ${res.statusText} ${errText}`);
+  }
+  const buf = Buffer.from(await res.arrayBuffer());
+  fs.writeFileSync(outPath, buf);
 }
 
 // ============================================================
@@ -163,12 +195,28 @@ async function main() {
   fs.mkdirSync(outDir, { recursive: true });
   const durations = {};
 
+  if (TTS_PROVIDER === "vieneu") {
+    try {
+      const health = await fetch(`${VIENEU_API_URL}/health`, { signal: AbortSignal.timeout(3000) });
+      if (!health.ok) {
+        console.warn(`[VieNeu] Cảnh báo: Server trả về HTTP ${health.status}`);
+      }
+    } catch (err) {
+      throw new Error(
+        `TTS_PROVIDER=vieneu nhưng không kết nối được tới ${VIENEU_API_URL}.\n` +
+          "Hãy đảm bảo server VieNeu TTS (CIT Voice Studio) đang chạy tại địa chỉ này.",
+      );
+    }
+  }
+
   for (const line of LINES) {
     const outPath = path.join(outDir, `${line.id}.mp3`);
     process.stdout.write(`Generating ${line.id}: "${line.text}" ... `);
 
     if (TTS_PROVIDER === "edge") {
       await generateEdgeSpeech(line.text, outPath);
+    } else if (TTS_PROVIDER === "vieneu") {
+      await generateVieNeuSpeech(line.text, outPath);
     } else {
       const audioUrl = await generateVbeeSpeech(line.text);
       await downloadAudio(audioUrl, outPath);

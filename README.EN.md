@@ -52,7 +52,7 @@ A few short published TikTok/Reels/Shorts demo videos:
   2. **Middle section** — animated running caption, highlighting key words with a preset color.
   3. **Bottom half** — a 2D robot MC avatar with 4 poses (point left, point right, curious shrug,
      explain), mouth/eyes LEDs blink in sync with the narration's rhythm.
-- **Automatic voiceover** — supports **2 TTS providers**: **Vbee TTS API** (high quality, requires account) and **[Edge TTS](https://github.com/travisvn/edge-tts-universal)** (free, no API key needed, pure Node.js). Uses `ffprobe` to measure each sentence's real duration to sync GSAP animation down to the millisecond (no guesswork).
+- **Automatic voiceover** — supports **3 TTS providers**: **[VieNeu TTS](vieneu.md)** (local inference via CIT Voice Studio, instant response, high quality 48 kHz), **[Edge TTS](https://github.com/travisvn/edge-tts-universal)** (free, no API key needed, pure Node.js), and **[Vbee TTS API](vbee.md)** (high quality, requires account). Uses `ffprobe` to measure each sentence's real duration to sync GSAP animation down to the millisecond (no guesswork).
 - **Proper Vietnamese font** — Be Vietnam Pro embedded via `@font-face` + `unicode-range`, no diacritic rendering issues like with a compiler's default font.
 - **Many videos, one template** — each video is an independent HyperFrames project under `videos/`, sharing the same design/credentials, easy to clone for a new topic.
 
@@ -78,6 +78,7 @@ auto-compare-video/
 ├── README.md, LICENSE                ← you are here
 ├── CLAUDE.md, AGENTS.md               ← guidance for AI coding agents (Claude Code, Cursor...)
 ├── DESIGN.md                          ← layout/color/font/motion contract — shared by every video
+├── vieneu.md                          ← VieNeu TTS API documentation (CIT Voice Studio)
 ├── vbee.md                            ← Vbee TTS API documentation
 ├── docs/previews/                     ← static preview images used in the README
 ├── .env                                ← shared TTS credentials (create yourself, not committed)
@@ -99,8 +100,9 @@ Each video under `videos/` is a **fully independent** HyperFrames project (its o
 ## 🛠️ Requirements
 1. An AI coding agent (Claude Code, Cursor, Codex, etc.) to invoke the automated video-creation skill.
 2. **TTS provider** (pick one):
-   - **[Vbee TTS](https://vbee.vn/ref/5GTJ9TGU)** — high quality, many Vietnamese voices, requires an account (App ID + Access Token).
+   - **[VieNeu TTS](vieneu.md)** — runs locally with zero API cost, 20 natural voices, 48 kHz. **Requires installing [CIT Voice Studio](https://github.com/Cuongyd196/cit-voice-studio)** and running its local API server at `http://127.0.0.1:8001`.
    - **[Edge TTS](https://github.com/travisvn/edge-tts-universal)** — free, no API key needed, Microsoft Neural voices. Already bundled via npm (`edge-tts-universal`), nothing extra to install.
+   - **[Vbee TTS](https://vbee.vn/ref/5GTJ9TGU)** — high quality, many Vietnamese voices, requires an account (App ID + Access Token). See [vbee.md](vbee.md).
 3. **Node.js** ≥ 18
 4. **FFmpeg & FFprobe** on your `PATH` — needed to measure audio duration and render video
 
@@ -116,13 +118,18 @@ cp .env.example .env
 ```
 
 ```env
-TTS_PROVIDER=edge                    # "edge" (free) or "vbee" (requires account)
+TTS_PROVIDER=vieneu                  # "vieneu" (local) | "edge" (free) | "vbee" (requires account)
+VIENEU_API_URL=http://127.0.0.1:8001 # CIT Voice Studio local endpoint
+VIENEU_VOICE=Minh Đức                # VieNeu voice (see vieneu.md)
 EDGE_VOICE=vi-VN-NamMinhNeural      # Edge TTS voice — male: NamMinhNeural, female: HoaiMyNeural
 CHANNEL=Cường IT                     # channel name shown on the eyebrow tag
 AUTO_CREATE_VIDEO=0                  # 0 = confirm each step | 1 = run automatically
 ```
 
-> **Uses Edge TTS (free) by default** — runs entirely in Node.js (via [`edge-tts-universal`](https://github.com/travisvn/edge-tts-universal)), no Python or API key needed. For Vbee TTS (higher quality): set `TTS_PROVIDER=vbee` and add `VBEE_APP_ID`, `VBEE_ACCESS_TOKEN`, `VBEE_VOICE_CODE` — see `.env.example` for the full list.
+> **Flexible choice of 3 TTS providers**:
+> - **VieNeu TTS**: set `TTS_PROVIDER=vieneu`. Requires installing and running the local server from **[CIT Voice Studio](https://github.com/Cuongyd196/cit-voice-studio)** (default at `http://127.0.0.1:8001`, see details in [`vieneu.md`](vieneu.md)).
+> - **Edge TTS**: set `TTS_PROVIDER=edge` to run via `edge-tts-universal` (no API key needed).
+> - **Vbee TTS**: set `TTS_PROVIDER=vbee` with your credentials (see [`vbee.md`](vbee.md)).
 
 `.env` is not committed (already in `.gitignore`) — only `.env.example` is checked into the repo as a template.
 
